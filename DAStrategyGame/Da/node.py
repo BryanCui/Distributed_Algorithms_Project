@@ -1,9 +1,12 @@
+#coding=utf-8
 # server
-
+import json
 import socket
+import sys
+
 
 # local host, port
-address = ('127.0.0.1', 31500)
+address = ('0.0.0.0', 2333)
 
 #initialize socket
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # s = socket.socket()
@@ -18,9 +21,13 @@ while True:
     if addr[0] not in node_list:
         node_list[addr[0]] = 0
     print node_list
-    cl.send('byebye')
+    print "指导价格"
     ra = cl.recv(512)
-    print ra
+    # if some commands comes
+    ra = json.loads(ra)
+    if ra['command'] == 'chishi':
+        cl.send('chishi')
+
 
 cl.close()
 s.close()
