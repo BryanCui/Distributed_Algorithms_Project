@@ -3,6 +3,8 @@
 import sys, socket, thread, time, logging
 import message
 
+from User.User import *
+
 logging.getLogger().setLevel(logging.INFO)
 
 class Node:
@@ -15,6 +17,8 @@ class Node:
         self.__server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__server.bind(('0.0.0.0', port))
         self.__server.listen(5)
+        self.__user = User()
+        print self.__user.show_resources()
         thread.start_new_thread(self.listen, ())
 
     @property
