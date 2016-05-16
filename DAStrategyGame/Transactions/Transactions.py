@@ -15,7 +15,6 @@ class Transaction:
     def start_transaction(self):
         self.__node.send_message(self, self.__host, self.__MSG.startTransaction())
 
-
     def end_transaction(self):
         self.__node.send_message(self, self.__host, self.__MSG.finishTransaction())
 
