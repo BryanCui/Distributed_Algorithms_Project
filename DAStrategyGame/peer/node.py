@@ -4,6 +4,7 @@ import sys, socket, thread, time, logging
 import message
 
 from User.User import *
+from User.Resource import *
 
 logging.getLogger().setLevel(logging.INFO)
 

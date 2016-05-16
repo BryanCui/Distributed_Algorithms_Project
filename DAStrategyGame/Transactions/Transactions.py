@@ -1,6 +1,7 @@
 #Transactions
 import message
-import time, socket
+import time
+from User.Resource import *
 
 UUID = int(round(time.time() * 1000))
 
@@ -27,12 +28,14 @@ class Transaction:
     def buy_resource(self, resource, quantity):
         self.__node.send_message(self, self.__host, self.__MSG.buyResource(self, resource, quantity))
         self.__user.add_resources(resource, quantity)
-        self.__user.consume_money(resource.getPrice() * quantity)
+        current_resource = Resource(resource)
+        self.__user.consume_money(current_resource.getPrice() * quantity)
 
     def sell_resource(self, resource, quantity):
         self.__node.send_message(self, self.__host, self.__MSG.sellResource(self, resource, quantity))
+        current_resource = Resource(resource)
         self.__user.consume_resources(resource, quantity)
-        self.__user.add_money(resource.getPrice() * quantity)
+        self.__user.add_money(current_resource.getPrice() * quantity)
 
     def set_transaction_status(self, user):
         self.__food = user.get_food()
