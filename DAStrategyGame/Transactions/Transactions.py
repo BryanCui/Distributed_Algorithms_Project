@@ -17,12 +17,12 @@ class Transaction:
 
 
     def end_transaction(self):
+        self.__node.send_message(self, self.__host, self.__MSG.finishTransaction())
 
+    def buy_resource(self, resource, quantity):
+        self.__node.send_message(self, self.__host, self.__MSG.buyResource(self, resource, quantity))
 
-    def buy_resource(self):
-
-
-    def sell_resource(self):
-
+    def sell_resource(self, resource, quantity):
+        self.__node.send_message(self, self.__host, self.__MSG.sellResource(self, resource, quantity))
 
 
