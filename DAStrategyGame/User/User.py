@@ -1,6 +1,9 @@
 # user
 
 
+from TradingCenter import TradingCenter
+
+
 class User:
     def __init__(self):
         self.__food = 1000
@@ -8,6 +11,7 @@ class User:
         self.__mineral = 1000
         self.__leather = 1000
         self.__money = 10000
+        self.__trading_center = TradingCenter()
 
     def set_resources(self, food, wood, mineral, leather, money):
         self.__food = food

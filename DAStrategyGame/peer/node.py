@@ -1,9 +1,11 @@
 # coding=UTF-8
 
-import sys, socket, thread, time, logging
+import socket, thread, time, logging
 import message
+import sys
+sys.path.append("../")
 
-from User.User import *
+from User.User import User
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -19,7 +21,6 @@ class Node:
         self.__server.bind(('0.0.0.0', port))
         self.__server.listen(5)
         self.__user = User()
-        print self.__user.show_resources()
         print self.__user.show_resources()
         thread.start_new_thread(self.listen, ())
 
