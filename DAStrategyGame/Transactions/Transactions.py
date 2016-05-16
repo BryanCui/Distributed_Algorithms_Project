@@ -3,17 +3,18 @@ import message
 import time
 
 UUID = int(round(time.time() * 1000))
-MSG = message.Message(UUID)
+
 
 class Transaction:
     def __init__(self, host, node):
         self.__host = host
         self.__node = node
+        self.__MSG = message.Message(UUID)
 
 
     def start_transaction(self):
-        message
-        self.__node.send_message(self, self.__host, MSG.)
+        self.__node.send_message(self, self.__host, self.__MSG.startTransaction())
+
 
     def end_transaction(self):
 
