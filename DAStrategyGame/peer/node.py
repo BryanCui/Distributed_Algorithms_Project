@@ -65,6 +65,21 @@ class Node:
                 logging.info('do nothing')
         elif msg['level'] == 'snapshot':
             logging.info('todo')
+        elif msg['level'] == 'transaction':
+            if msg['type'] == 'startTransaction':
+                socket.send(self.msg.confirmStartTransaction())
+            elif msg['type'] == 'confirmStartTransaction':
+                resource = msg['resource']
+                quantity = msg['quantity']
+                socket.send(self.msg.buyResource(resource, quantity))
+            elif msg['type'] == 'buyResource':
+                resource = msg['resource']
+                quantity = msg['quantity']
+                socket.send(self.msg.sellResource(resource, quantity))
+            elif msg['type'] == 'finishTransaction':
+                socket.send(self.msg.finishTransaction())
+            elif msg['type'] == 'confirmFinishTransaction':
+                socket.send(self.msg.confirmFinishTransaction())
 
     def hasNode(self, uuid):
         for node in self.nodeList:

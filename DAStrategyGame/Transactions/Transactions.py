@@ -1,6 +1,6 @@
 #Transactions
 import message
-import time
+import time, socket
 
 UUID = int(round(time.time() * 1000))
 
@@ -23,5 +23,6 @@ class Transaction:
 
     def sell_resource(self, resource, quantity):
         self.__node.send_message(self, self.__host, self.__MSG.sellResource(self, resource, quantity))
+
 
 
