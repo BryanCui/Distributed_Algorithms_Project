@@ -42,9 +42,9 @@ class Node:
 
     def handle_message(self, socket, addr, msg):
         msg = self.msg.parse(msg)
+        node = (msg['uuid'], addr[0], msg['port'])
         # check if this message is from an unknown node, add it to nodeList
         if not self.hasNode(msg['uuid']):
-            node = (msg['uuid'], addr[0], msg['port'])
             self.nodeList.append(node)
             logging.info('add node (%d,%s,%d)' % node)
 
@@ -61,6 +61,14 @@ class Node:
                     if not self.hasNode(node[0]) and node[0] != self.__uuid:
                         self.nodeList.append(node)
                 logging.info('updated node list: %s' % self.nodeList)
+            elif msg['type'] == 'logout':
+                # delete node
+                self.deleteNode(msg['uuid'])
+                socket.send(self.msg.ack())
+                logging.info('deleted node (%d,%s,%d)' % node)
+            elif msg['type'] == 'ack':
+                # do nothing yet
+                pass
             else:
                 logging.info('do nothing')
         elif msg['level'] == 'snapshot':
@@ -81,6 +89,12 @@ class Node:
             elif msg['type'] == 'confirmFinishTransaction':
                 socket.send(self.msg.confirmFinishTransaction())
 
+    def deleteNode(self, uuid):
+        for node in self.nodeList:
+            if node[0] == uuid:
+                self.nodeList.remove(node)
+                break
+
     def hasNode(self, uuid):
         for node in self.nodeList:
             if node[0] == uuid:
@@ -100,6 +114,7 @@ class Node:
 
 def main(argv):
     node = Node(argv[1], int(argv[2]))
+    # for debug only
     while True:
         line = sys.stdin.readline()
         ws = line.split()
@@ -107,6 +122,10 @@ def main(argv):
             node.send_message((ws[1], int(ws[2])), node.msg.requireNodeList())
         elif ws[0] == 'nodelist':
             logging.info('current local node list: %s' % node.nodeList)
+        elif ws[0] == 'logout':
+            for n in node.nodeList:
+                node.send_message((n[1], n[2]), node.msg.logout())
+            logging.info('logged out. bye.')
 
 if __name__ == '__main__':
     main(sys.argv)

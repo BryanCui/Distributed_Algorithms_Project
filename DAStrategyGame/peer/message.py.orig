@@ -15,14 +15,7 @@ class Message:
         msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'app', 'type': 'provideNodeList', 'list': list}
         return json.dumps(msg)
 
-    def logout(self):
-        msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'app', 'type': 'logout'}
-        return json.dumps(msg)
-
-    def ack(self):
-        msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'app', 'type': 'ack'}
-        return json.dumps(msg)
-
+<<<<<<< HEAD
     def startTransaction(self, resource, quantity):
         msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'transaction', 'type': 'startTransaction', 'resource':resource, 'quantity': quantity}
         return json.dumps(msg)
@@ -45,6 +38,14 @@ class Message:
 
     def sellResource(self, resource, quantity):
         msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'transaction', 'type': 'sellResource', 'resource':resource, 'quantity': quantity}
+=======
+    def logout(self):
+        msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'app', 'type': 'logout'}
+        return json.dumps(msg)
+
+    def ack(self):
+        msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'app', 'type': 'ack'}
+>>>>>>> 392d973a63fdb668f41f8c7bc4191ca61055bde4
         return json.dumps(msg)
 
     def parse(self, msg):
