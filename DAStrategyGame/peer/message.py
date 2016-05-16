@@ -15,6 +15,14 @@ class Message:
         msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'app', 'type': 'provideNodeList', 'list': list}
         return json.dumps(msg)
 
+    def logout(self):
+        msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'app', 'type': 'logout'}
+        return json.dumps(msg)
+
+    def ack(self):
+        msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'app', 'type': 'ack'}
+        return json.dumps(msg)
+
     def parse(self, msg):
         try:
             return json.loads(msg)
