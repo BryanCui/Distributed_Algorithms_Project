@@ -1,17 +1,17 @@
-#coding=UTF-8
+# coding=UTF-8
 
 import sys, socket, thread, time, logging
 import message
 
 from User.User import *
-from User.Resource import *
 
 logging.getLogger().setLevel(logging.INFO)
+
 
 class Node:
     def __init__(self, nickname, port):
         self.__nickname = nickname
-        self.__nodeList = [] # [(nickname:int, ip:str, port:int)]
+        self.__nodeList = []  # [(nickname:int, ip:str, port:int)]
         self.__port = port
         self.__uuid = int(round(time.time() * 1000))
         self.__msg = message.Message(self.__uuid, port)
@@ -19,6 +19,7 @@ class Node:
         self.__server.bind(('0.0.0.0', port))
         self.__server.listen(5)
         self.__user = User()
+        print self.__user.show_resources()
         print self.__user.show_resources()
         thread.start_new_thread(self.listen, ())
 
@@ -34,13 +35,13 @@ class Node:
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         client.connect(addr)
         client.send(msg)
-        response = client.recv(1024*1024)
+        response = client.recv(1024 * 1024)
         logging.info(response)
         self.handle_message(client, addr, response)
         client.close()
 
     def handle_client(self, client_socket, addr):
-        request = client_socket.recv(1024*1024)
+        request = client_socket.recv(1024 * 1024)
         logging.info('received %s' % request)
         self.handle_message(client_socket, addr, request)
         client_socket.close()
@@ -106,7 +107,6 @@ class Node:
                 return True
         return False
 
-
     def listen(self):
         while True:
             logging.info('Listening...')
@@ -115,7 +115,8 @@ class Node:
                 logging.info('connection from: %s:%d' % (addr[0], addr[1]))
             except KeyboardInterrupt:
                 break
-            thread.start_new_thread(self.handle_client, (client,addr,))
+            thread.start_new_thread(self.handle_client, (client, addr,))
+
 
 def main(argv):
     node = Node(argv[1], int(argv[2]))
@@ -131,6 +132,7 @@ def main(argv):
             for n in node.nodeList:
                 node.send_message((n[1], n[2]), node.msg.logout())
             logging.info('logged out. bye.')
+
 
 if __name__ == '__main__':
     main(sys.argv)

@@ -1,9 +1,6 @@
-#Transactions
-import message
-import time
-from User.Resource import *
+# Transactions
 
-UUID = int(round(time.time() * 1000))
+from User.Resource import *
 
 
 class Transaction:
@@ -12,12 +9,13 @@ class Transaction:
     __mineral = 0
     __leather = 0
     __money = 0
-    def __init__(self, host, msg, node, user):
+
+    def __init__(self, host, msg, node, user, tradingCenter):
         self.__host = host
         self.__node = node
         self.__MSG = msg
         self.__user = user
-
+        self.__tradingCenter = tradingCenter
 
     def start_transaction(self):
         self.__node.send_message(self, self.__host, self.__MSG.startTransaction())
@@ -34,7 +32,7 @@ class Transaction:
     def sell_resource(self, resource, quantity):
         self.__node.send_message(self, self.__host, self.__MSG.sellResource(self, resource, quantity))
         current_resource = Resource(resource)
-        self.__user.consume_resources(resource, quantity)
+        self.__tradingCenter.consume_resources(resource, quantity)
         self.__user.add_money(current_resource.getPrice() * quantity)
 
     def set_transaction_status(self, user):
@@ -44,14 +42,16 @@ class Transaction:
         self.__leather = user.get_leather()
         self.__money = user.get_money()
 
-    def recover_transaction_status(self, user):
+    def set_transaction_status(self, trading_center):
+        self.__food = trading_center.get_food()
+        self.__wood = trading_center.get_wood()
+        self.__mineral = trading_center.get_mineral()
+        self.__leather = trading_center.get_leather()
+
+    def recover_transaction_status_buy(self):
         self.__user.set_resources(self.__food, self.__wood, self.__mineral, self.__leather, self.__money)
         return self.__user
 
-
-
-
-
-
-
-
+    def recover_transaction_status_sell(self):
+        self.__tradingCenter.set_resources(self.__food, self.__wood, self.__mineral, self.__leather, self.__money)
+        return self.__user
