@@ -21,7 +21,7 @@ class App(npyscreen.NPSApp):
             address = loginScreen.address.value
             role = loginScreen.role.get_selected_objects()[0];
 
-            if not self.connect(address):
+            if not self.setup(address):
                 popup = npyscreen.Popup(name="Login failed")
                 popup.add_widget(npyscreen.FixedText
                     , value="Please check the address and try again later"
@@ -33,8 +33,19 @@ class App(npyscreen.NPSApp):
         mainScreen = MainScreen("[" + nickname + " as " + role + "]")
         mainScreen.edit();
 
-    # connect to remote node
-    def connect(self, address):
+    # setup the node
+    def setup(self, address):
+        if address.split(":")[0] == "127.0.0.1":
+            return self.launch();
+        else:
+            return self.login(address)
+
+    # login to remote server
+    def login(self, address):
+        return True;
+
+    # launch the node itself
+    def launch(self):
         return False
 
 if __name__ == "__main__":
