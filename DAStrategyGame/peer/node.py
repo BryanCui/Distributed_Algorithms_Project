@@ -148,7 +148,9 @@ class Node(object):
                 return True
         return False
     # end of helpers
-    
+
+    def get_user(self):
+        return self.__user
 
 
 def main(argv):
