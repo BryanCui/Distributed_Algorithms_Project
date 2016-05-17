@@ -1,6 +1,7 @@
 #coding=UTF-8
 
 import sys, socket, thread, time, logging
+import pprint
 import threading
 import message
 from bank import Bank
@@ -14,8 +15,7 @@ logging.getLogger().setLevel(logging.INFO)
 
 class BankNode(node.Node):
     def __init__(self, nickname, port):
-        super(BankNode,self).__init__(nickname, port)
-        thread.start_new_thread(self.listen, ())
+        super(BankNode, self).__init__(nickname, port)
         thread.start_new_thread(self.node_main, ())
         self.bank = Bank()
         self.cl_list = []
@@ -32,7 +32,8 @@ class BankNode(node.Node):
         while True:
             logging.info('Listening...')
             try:
-                client, addr = self.__server.accept()
+                logging.info(self)
+                client, addr = self._server.accept()
                 logging.info('connection from: %s:%d' % (addr[0], addr[1]))
                 self.cl_list.append(client)
                 self.addr_list.append(addr)

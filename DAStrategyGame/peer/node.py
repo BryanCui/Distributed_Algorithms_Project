@@ -25,31 +25,31 @@ router = {
 
 class Node(object):
     def __init__(self, nickname, port):
-        self.__nickname = nickname
-        self.__nodeList = []  # [(nickname:int, ip:str, port:int)]
-        self.__port = port
-        self.__uuid = int(round(time.time() * 1000))
-        self.__msg = message.Message(self.__uuid, port)
-        self.__server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.__server.bind(('0.0.0.0', port))
-        self.__server.listen(5)
-        self.__user = User()
-        print self.__user.show_resources()
+        self._nickname = nickname
+        self._nodeList = []  # [(nickname:int, ip:str, port:int)]
+        self._port = port
+        self._uuid = int(round(time.time() * 1000))
+        self._msg = message.Message(self._uuid, port)
+        self._server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self._server.bind(('0.0.0.0', port))
+        self._server.listen(5)
+        self._user = User()
+        print self._user.show_resources()
         thread.start_new_thread(self.listen, ())
 
     @property
     def msg(self):
-        return self.__msg
+        return self._msg
 
     @property
     def nodeList(self):
-        return self.__nodeList
+        return self._nodeList
 
     def listen(self):
         while True:
             logging.info('Listening...')
             try:
-                client, addr = self.__server.accept()
+                client, addr = self._server.accept()
                 logging.info('connection from: %s:%d' % (addr[0], addr[1]))
             except KeyboardInterrupt:
                 break
@@ -87,7 +87,8 @@ class Node(object):
             logging.info(self)
             logging.info(type(self))
             logging.info(type(self).__name__)
-            cls = globals()[type(self).__name__]
+            # cls = globals()[type(self).__name__]
+            cls = self.__class__
             func = cls.__dict__[router[(msg_level, msg_type)]]
             apply(func, (self, socket, addr, node, msg))
 
@@ -101,7 +102,7 @@ class Node(object):
         # update local node list
         logging.info('before updating node list: %s' % self.nodeList)
         for node in msg['list']:
-            if not self.hasNode(node[0]) and node[0] != self.__uuid:
+            if not self.hasNode(node[0]) and node[0] != self._uuid:
                 self.nodeList.append(node)
         logging.info('updated node list: %s' % self.nodeList)
 
@@ -151,7 +152,7 @@ class Node(object):
     # end of helpers
 
     def get_user(self):
-        return self.__user
+        return self._user
 
 def main(argv):
     node = Node(argv[1], int(argv[2]))
