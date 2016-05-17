@@ -23,6 +23,10 @@ class Message:
         msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'app', 'type': 'ack'}
         return json.dumps(msg)
 
+    def answerActivate(self, info='success', balance='0'):
+        msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'app', 'type': 'answerActivate','info': info , 'balance': balance}
+        return json.dumps(msg)
+
     def activateCdkey(self, cdkey):
         msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'app', 'type': 'activate', 'cdkey': cdkey}
         return json.dumps(msg)
