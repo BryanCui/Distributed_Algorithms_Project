@@ -6,6 +6,7 @@ import sys
 sys.path.append("../")
 
 from User.User import User
+from Transactions import Transactions
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -14,12 +15,15 @@ router = {
     ('app', 'provideNodeList'): 'onProvideNodeList',
     ('app', 'logout'): 'onLogout',
     ('app', 'ack'): 'onAck',
-    ('snapshot', ''): '',
-    ('transaction', 'startTransaction'): 'onStartTransaction',
-    ('transaction', 'confirmStartTransaction'): 'onConfirmStartTransaction',
-    ('transaction', 'buyResource'): 'onBuyResource',
-    ('transaction', 'finishTransaction'): 'onFinishTransaction',
-    ('transaction', 'confirmFinishTransaction'): 'onConfirmFinishTransaction'
+    ('app', 'startTransaction'): 'onStartTransaction',
+    ('app', 'confirmStartTransaction'): 'onConfirmStartTransaction',
+    ('app', 'buyResource'): 'onBuyResource',
+    ('app', 'sellResource'): 'onSellResource',
+    ('app', 'finishTransaction'): 'onFinishTransaction',
+    ('app', 'confirmFinishTransaction'): 'onConfirmFinishTransaction',
+    ('app', 'showTradingCenter'): 'onShowTradingCenter',
+    ('app', 'returnTradingCenter'): 'onReturnTradingCenter',
+    ('snapshot', ''): ''
 }
 
 
@@ -129,13 +133,27 @@ class Node(object):
         quantity = msg['quantity']
         self.get_user().get_trading_center().consume_resources(resource, int(quantity))
         self.get_user().add_money(self.get_user().get_trading_center().earn_money(resource,int(quantity)))
-        socket.send(self.msg.sellResource(resource, quantity))
+        socket.send(self.msg.sellResource(resource, quantity, self.get_user().get_trading_center().get_resources_price(resource)))
 
-    def onFinishTransaction(self, socket, addr, node, msg):
+    def onSellResource(self, socket, addr, node, msg):
+        resource = msg['resource']
+        quantity = msg['quantity']
+        price = msg['price']
+        self.get_user().add_resources(resource, int(quantity))
+        self.get_user().consume_money(int(price) * int(quantity))
         socket.send(self.msg.finishTransaction())
 
-    def onConfirmFinishTransaction(self, socket, addr, node, msg):
+    def onFinishTransaction(self, socket, addr, node, msg):
         socket.send(self.msg.confirmFinishTransaction())
+
+    def onConfirmFinishTransaction(self, socket, addr, node, msg):
+        return
+
+    def onShowTradingCenter(self, socket, addr, node, msg):
+        socket.send(self.msg.returnTradingCenter(self.get_user().get_trading_center().get_trading_list()))
+
+    def onReturnTradingCenter(self, socket, addr, node, msg):
+        logging.info(msg['tradingList'])
     # end of handlers
 
 
@@ -179,6 +197,11 @@ def main(argv):
             node.get_user().put_resource_into_trading_center(ws[1], int(ws[2]), int(ws[3]))
         elif ws[0] == 'get_resource_back_from_trading_center':
             node.get_user().get_resource_from_trading_center_back(int(ws[1]), int(ws[2]))
+        elif ws[0] == 'get_trading_list':
+            node.send_message((ws[1], int(ws[2])), node.msg.showTradingCenter())
+        elif ws[0] == 'buy':
+            transaction = Transactions(ws[1], node._msg, node, node.get_user())
+            transaction.start_transaction(ws[2], ws[3])
 
 
 if __name__ == '__main__':

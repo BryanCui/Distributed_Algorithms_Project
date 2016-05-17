@@ -28,27 +28,35 @@ class Message:
         return json.dumps(msg)
 
     def startTransaction(self, resource, quantity):
-        msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'transaction', 'type': 'startTransaction', 'resource':resource, 'quantity': quantity}
+        msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'app', 'type': 'startTransaction', 'resource':resource, 'quantity': quantity}
         return json.dumps(msg)
 
     def confirmStartTransaction(self, resource, quantity):
-        msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'transaction', 'type': 'confirmStartTransaction', 'resource':resource, 'quantity': quantity}
+        msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'app', 'type': 'confirmStartTransaction', 'resource':resource, 'quantity': quantity}
         return json.dumps(msg)
 
     def finishTransaction(self):
-        msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'transaction', 'type': 'finishTransaction'}
+        msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'app', 'type': 'finishTransaction'}
         return json.dumps(msg)
 
     def confirmFinishTransaction(self):
-        msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'transaction', 'type': 'confirmFinishTransaction'}
+        msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'app', 'type': 'confirmFinishTransaction'}
         return json.dumps(msg)
 
     def buyResource(self, resource, quantity):
-        msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'transaction', 'type': 'buyResource', 'resource':resource, 'quantity': quantity}
+        msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'app', 'type': 'buyResource', 'resource':resource, 'quantity': quantity}
         return json.dumps(msg)
 
-    def sellResource(self, resource, quantity):
-        msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'transaction', 'type': 'sellResource', 'resource':resource, 'quantity': quantity}
+    def sellResource(self, resource, quantity, price):
+        msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'app', 'type': 'sellResource', 'resource':resource, 'quantity': quantity, 'price': price}
+        return json.dumps(msg)
+
+    def showTradingCenter(self):
+        msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'app', 'type': 'showTradingCenter'}
+        return json.dumps(msg)
+
+    def returnTradingCenter(self, list):
+        msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'app', 'type': 'returnTradingCenter', 'tradingList': list}
         return json.dumps(msg)
 
     def parse(self, msg):
