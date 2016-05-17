@@ -45,6 +45,16 @@ class Node(object):
     def nodeList(self):
         return self.__nodeList
 
+    def listen(self):
+        while True:
+            logging.info('Listening...')
+            try:
+                client, addr = self.__server.accept()
+                logging.info('connection from: %s:%d' % (addr[0], addr[1]))
+            except KeyboardInterrupt:
+                break
+            thread.start_new_thread(self.handle_client, (client, addr,))
+
     def send_message(self, addr, msg):
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         client.connect(addr)
@@ -81,6 +91,7 @@ class Node(object):
             func = cls.__dict__[router[(msg_level, msg_type)]]
             apply(func, (self, socket, addr, node, msg))
 
+    # begin handlers
     def onRequireNodeList(self, socket, addr, node, msg):
         # reply with local node list
         socket.send(self.msg.provideNodeList(self.nodeList))
@@ -122,7 +133,10 @@ class Node(object):
 
     def onConfirmFinishTransaction(self, socket, addr, node, msg):
         socket.send(self.msg.confirmFinishTransaction())
+    # end of handlers
 
+
+    # begin helpers
     def deleteNode(self, uuid):
         for node in self.nodeList:
             if node[0] == uuid:
@@ -134,16 +148,8 @@ class Node(object):
             if node[0] == uuid:
                 return True
         return False
-
-    def listen(self):
-        while True:
-            logging.info('Listening...')
-            try:
-                client, addr = self.__server.accept()
-                logging.info('connection from: %s:%d' % (addr[0], addr[1]))
-            except KeyboardInterrupt:
-                break
-            thread.start_new_thread(self.handle_client, (client, addr,))
+    # end of helpers
+    
 
 
 def main(argv):
