@@ -15,6 +15,7 @@ class Transactions:
         self.__node = node
         self.__MSG = msg
         self.__user = user
+        self.__is_finished = False
 
     def start_transaction(self, resource, quantity):
         self.__node.send_message(self.__host, self.__MSG.startTransaction(resource, quantity))
@@ -31,6 +32,7 @@ class Transactions:
 
     def confirm_finish_transaction(self, socket):
         socket.send(self.__MSG.confirmFinishTransaction())
+        self.set_finished(True)
 
     def buy_resource(self, addr, resource, quantity):
         self.__user.add_resources(resource, quantity)
@@ -62,5 +64,11 @@ class Transactions:
     def recover_transaction_status_sell(self, trading_center):
         trading_center.set_resources(self.__food, self.__wood, self.__mineral, self.__leather, self.__money)
         return self.__user
+
+    def set_finished(self, finished):
+        self.__is_finished = finished
+
+    def get_finished(self):
+        return self.__is_finished
 
 
