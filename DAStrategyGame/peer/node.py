@@ -159,8 +159,8 @@ class Node(object):
         socket.send(self.msg.returnTradingCenter(self.user.get_trading_center().get_trading_list()))
 
     def onReturnTradingCenter(self, socket, addr, node, msg):
-        for item in msg['tradingList']:
-            logging.info(item[2] + ': ' + str(item[0]) + ', Price: ' + str(item[1]))
+        for (item, value) in msg['tradingList'].items():
+            logging.info(item + ': ' + str(value[0]) + ', Price: ' + str(value[1]))
     # end of handlers
 
 
@@ -193,11 +193,11 @@ def main(argv):
             for n in node.nodeList:
                 node.send_message((n[1], n[2]), node.msg.logout())
             logging.info('logged out. bye.')
-        elif ws[0] == 'show_resources':
+        elif ws[0] == 'resource':
             logging.info(node.user.show_resources())
-        elif ws[0] == 'show_trading_center':
+        elif ws[0] == 'trading_center':
             logging.info(node.user.get_trading_center().show_trading_center())
-        elif ws[0] == 'put_resource_to_sell':
+        elif ws[0] == 'sell':
             node.user.put_resource_into_trading_center(ws[1], int(ws[2]), int(ws[3]))
         elif ws[0] == 'get_resource_back_from_trading_center':
             node.user.get_resource_from_trading_center_back(ws[1], int(ws[2]))
