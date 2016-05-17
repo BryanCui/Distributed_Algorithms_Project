@@ -9,44 +9,40 @@ class Transactions:
     __mineral = 0
     __leather = 0
     __money = 0
-    __transaction_status = ['', False]
 
     def __init__(self, host, msg, node, user):
         self.__host = host
         self.__node = node
         self.__MSG = msg
         self.__user = user
+        self.__is_finished = False
 
     def start_transaction(self, resource, quantity):
         self.__node.send_message(self.__host, self.__MSG.startTransaction(resource, quantity))
 
-    def confirm_start_transaction(self, resource, quantity):
-        self.__node.send_message(self.__host, self.__MSG.confirmStartTransaction(resource, quantity))
+    def confirm_start_transaction(self, socket, resource, quantity):
+        socket.send(self.__MSG.confirmStartTransaction(resource, quantity))
 
-    def end_transaction(self):
-        self.__node.send_message(self.__host, self.__MSG.finishTransaction())
+    def finish_transaction(self, addr, msg):
+        resource = msg['resource']
+        quantity = msg['quantity']
+        price = msg['price']
+        self.__user.consume_money(int(price) * quantity)
+        self.__node.send_message(addr, self.__MSG.finishTransaction())
 
-    def confirm_end_transaction(self):
-        self.set_transaction_finished_status(True)
-        self.__node.send_message(self.__host, self.__MSG.confirmFinishTransaction())
+    def confirm_finish_transaction(self, socket):
+        socket.send(self.__MSG.confirmFinishTransaction())
+        self.set_finished(True)
 
-    def buy_resource(self, resource, quantity):
-        self.set_transaction_status('buy')
-        self.set_transaction_finished_status(False)
-
-        self.__node.send_message(self.__host, self.__MSG.buyResource(self, resource, quantity))
+    def buy_resource(self, addr, resource, quantity):
         self.__user.add_resources(resource, quantity)
-        current_resource = Resource(resource)
-        self.__user.consume_money(current_resource.getPrice() * quantity)
+        #self.__user.consume_money(self.__user.get_trading_center().earn_money(resource, quantity))
+        self.__node.send_message(addr, self.__MSG.buyResource(resource, quantity))
 
-    def sell_resource(self, resource, quantity, trading_center):
-        self.set_transaction_status('sell')
-        self.set_transaction_finished_status(False)
-
-        self.__node.send_message(self.__host, self.__MSG.sellResource(self, resource, quantity))
-        current_resource = Resource(resource)
-        trading_center.consume_resources(resource, quantity)
-        self.__user.add_money(current_resource.getPrice() * quantity)
+    def sell_resource(self, socket, resource, quantity, price):
+        self.__user.get_trading_center().consume_resources(resource, quantity)
+        self.__user.add_money(int(price) * quantity)
+        socket.send(self.__MSG.sellResource(resource, quantity, self.__user.get_trading_center().get_resources_price(resource)))
 
     def set_transaction_status(self, user):
         self.__food = user.get_food()
@@ -69,12 +65,10 @@ class Transactions:
         trading_center.set_resources(self.__food, self.__wood, self.__mineral, self.__leather, self.__money)
         return self.__user
 
-    def set_transaction_status(self, transaction_type):
-        self.__transaction_status[0] = transaction_type
+    def set_finished(self, finished):
+        self.__is_finished = finished
 
-    def set_transaction_finished_status(self, is_done):
-        self.__transaction_status[1] = is_done
+    def get_finished(self):
+        return self.__is_finished
 
-    def get_transaction_status(self):
-        return self.__transaction_status
 

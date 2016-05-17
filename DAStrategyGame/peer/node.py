@@ -33,11 +33,12 @@ class Node(object):
         self._nodeList = []  # [(uuid:int, ip:str, port:int, nickname:str)]
         self._port = port
         self._uuid = int(round(time.time() * 1000))
-        self._msg = message.Message(self._uuid, port, self._nickname)
+        self._msg = message.Message(self._uuid, port, nickname)
         self._server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._server.bind(('0.0.0.0', port))
         self._server.listen(5)
         self._user = User()
+        self._transaction = Transactions('', self._msg, self,self._user)
         print self._user.show_resources()
         thread.start_new_thread(self.listen, ())
 
@@ -92,7 +93,7 @@ class Node(object):
         logging.info('receive msg: %s' % msg)
 
         # check if this message is from an unknown node, add it to nodeList
-        if not self.hasNode(msg['uuid']):
+        if not self.hasNode(msg['uuid']) and self._uuid != msg['uuid']:
             self.nodeList.append(node)
             logging.info('add node (%d,%s,%d,%s)' % node)
 
@@ -126,31 +127,29 @@ class Node(object):
         pass
 
     def onStartTransaction(self, socket, addr, node, msg):
-        socket.send(self.msg.confirmStartTransaction(msg['resource'], int(msg['quantity'])))
+        resource = msg['resource']
+        quantity = int(msg['quantity'])
+        self._transaction.confirm_start_transaction(socket, resource, quantity)
+        #socket.send(self.msg.confirmStartTransaction(msg['resource'], int(msg['quantity'])))
 
     def onConfirmStartTransaction(self, socket, addr, node, msg):
         resource = msg['resource']
         quantity = int(msg['quantity'])
-        self.send_message(addr, self.msg.buyResource(resource, quantity))
+        self._transaction.buy_resource(addr, resource, quantity)
+        #self.send_message(addr, self.msg.buyResource(resource, quantity))
 
     def onBuyResource(self, socket, addr, node, msg):
         resource = msg['resource']
         quantity = int(msg['quantity'])
-
-        self.user.get_trading_center().consume_resources(resource, quantity)
-        self.user.add_money(self.user.get_trading_center().earn_money(resource,quantity))
-        socket.send(self.msg.sellResource(resource, quantity, self.user.get_trading_center().get_resources_price(resource)))
+        price = self.user.get_trading_center().get_resources_price(resource)
+        self._transaction.sell_resource(socket, resource, quantity, price)
 
     def onSellResource(self, socket, addr, node, msg):
-        resource = msg['resource']
-        quantity = int(msg['quantity'])
-        price = msg['price']
-        self.user.add_resources(resource, quantity)
-        self.user.consume_money(int(price) * quantity)
-        self.send_message(addr, self.msg.finishTransaction())
+        self._transaction.finish_transaction(addr, msg)
 
     def onFinishTransaction(self, socket, addr, node, msg):
-        socket.send(self.msg.confirmFinishTransaction())
+        self._transaction.confirm_finish_transaction(socket)
+        #socket.send(self.msg.confirmFinishTransaction())
 
     def onConfirmFinishTransaction(self, socket, addr, node, msg):
         return
@@ -159,8 +158,8 @@ class Node(object):
         socket.send(self.msg.returnTradingCenter(self.user.get_trading_center().get_trading_list()))
 
     def onReturnTradingCenter(self, socket, addr, node, msg):
-        for item in msg['tradingList']:
-            logging.info(item[2] + ': ' + str(item[0]) + ', Price: ' + str(item[1]))
+        for (item, value) in msg['tradingList'].items():
+            logging.info(item + ': ' + str(value[0]) + ', Price: ' + str(value[1]))
     # end of handlers
 
 
@@ -186,26 +185,27 @@ def main(argv):
         ws = line.split()
         if ws[0] == 'connect':
             node.send_message((ws[1], int(ws[2])), node.msg.requireNodeList())
-
         elif ws[0] == 'nodelist':
             logging.info('current local node list: %s' % node.nodeList)
         elif ws[0] == 'logout':
             for n in node.nodeList:
                 node.send_message((n[1], n[2]), node.msg.logout())
             logging.info('logged out. bye.')
-        elif ws[0] == 'show_resources':
+        elif ws[0] == 'show':
+            logging.info(node.send_message((ws[1], int(ws[2])), node.msg.showTradingCenter()))
+        elif ws[0] == 'resource':
             logging.info(node.user.show_resources())
-        elif ws[0] == 'show_trading_center':
+        elif ws[0] == 'trading_center':
             logging.info(node.user.get_trading_center().show_trading_center())
-        elif ws[0] == 'put_resource_to_sell':
+        elif ws[0] == 'sell':
             node.user.put_resource_into_trading_center(ws[1], int(ws[2]), int(ws[3]))
         elif ws[0] == 'get_resource_back_from_trading_center':
             node.user.get_resource_from_trading_center_back(ws[1], int(ws[2]))
         elif ws[0] == 'get_trading_list':
             node.send_message((ws[1], int(ws[2])), node.msg.showTradingCenter())
         elif ws[0] == 'buy':
-            transaction = Transactions((ws[1], int(ws[2])), node._msg, node, node.user)
-            transaction.start_transaction(ws[3], ws[4])
+            node._transaction = Transactions((ws[1], int(ws[2])), node._msg, node, node.user)
+            node._transaction.start_transaction(ws[3], ws[4])
 
 
 if __name__ == '__main__':
