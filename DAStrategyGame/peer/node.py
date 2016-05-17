@@ -1,8 +1,9 @@
 # coding=UTF-8
 
-import socket, thread, time, logging, sys
+import socket, thread, time, logging
 import message
-
+import sys
+sys.path.append("../")
 
 from User.User import User
 
@@ -33,7 +34,7 @@ class Node(object):
         self.__server.bind(('0.0.0.0', port))
         self.__server.listen(5)
         self.__user = User()
-        logging.info(self.__user.show_resources())
+        print self.__user.show_resources()
         thread.start_new_thread(self.listen, ())
 
     @property
@@ -153,7 +154,6 @@ class Node(object):
 
     def get_user(self):
         return self.__user
-
 
 def main(argv):
     node = Node(argv[1], int(argv[2]))
