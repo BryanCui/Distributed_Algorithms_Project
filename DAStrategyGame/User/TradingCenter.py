@@ -33,6 +33,16 @@ class TradingCenter(Singleton):
     def get_leather_price(self):
         return self.__leather[1]
 
+    def get_resources_price(self, resource):
+        if resource == 'food':
+            return self.__food[1]
+        elif resource == 'wood':
+            return self.__wood[1]
+        elif resource == 'mineral':
+            return self.__mineral[1]
+        elif resource == 'leather':
+            return self.__leather[1]
+
     def set_resources(self, food, wood, mineral, leather):
         self.__food[1] = food
         self.__wood[1] = wood
@@ -65,3 +75,6 @@ class TradingCenter(Singleton):
         elif resource == 'leather':
             money = quantity * self.get_leather_price()
         return money
+
+    def get_trading_list(self):
+        return [self.__food, self.__wood, self.__mineral, self.__leather]

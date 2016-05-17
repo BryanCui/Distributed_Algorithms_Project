@@ -11,18 +11,17 @@ class Transaction:
     __money = 0
     __transaction_status = ['', False]
 
-    def __init__(self, host, msg, node, user, tradingCenter):
+    def __init__(self, host, msg, node, user):
         self.__host = host
         self.__node = node
         self.__MSG = msg
         self.__user = user
-        self.__tradingCenter = tradingCenter
 
-    def start_transaction(self):
-        self.__node.send_message(self, self.__host, self.__MSG.startTransaction())
+    def start_transaction(self, resource, quantity):
+        self.__node.send_message(self, self.__host, self.__MSG.startTransaction(resource, quantity))
 
-    def confirm_start_transaction(self):
-        self.__node.send_message(self, self.__host, self.__MSG.confirmStartTransaction())
+    def confirm_start_transaction(self, resource, quantity):
+        self.__node.send_message(self, self.__host, self.__MSG.confirmStartTransaction(resource, quantity))
 
     def end_transaction(self):
         self.__node.send_message(self, self.__host, self.__MSG.finishTransaction())
@@ -40,13 +39,13 @@ class Transaction:
         current_resource = Resource(resource)
         self.__user.consume_money(current_resource.getPrice() * quantity)
 
-    def sell_resource(self, resource, quantity):
+    def sell_resource(self, resource, quantity, trading_center):
         self.set_transaction_status('sell')
         self.set_transaction_finished_status(False)
 
         self.__node.send_message(self, self.__host, self.__MSG.sellResource(self, resource, quantity))
         current_resource = Resource(resource)
-        self.__tradingCenter.consume_resources(resource, quantity)
+        trading_center.consume_resources(resource, quantity)
         self.__user.add_money(current_resource.getPrice() * quantity)
 
     def set_transaction_status(self, user):
@@ -66,8 +65,8 @@ class Transaction:
         self.__user.set_resources(self.__food, self.__wood, self.__mineral, self.__leather, self.__money)
         return self.__user
 
-    def recover_transaction_status_sell(self):
-        self.__tradingCenter.set_resources(self.__food, self.__wood, self.__mineral, self.__leather, self.__money)
+    def recover_transaction_status_sell(self, trading_center):
+        trading_center.set_resources(self.__food, self.__wood, self.__mineral, self.__leather, self.__money)
         return self.__user
 
     def set_transaction_status(self, transaction_type):
