@@ -10,6 +10,7 @@ class App(npyscreen.NPSApp):
     # main entry of the App
     def main(self):
 
+        # loop until cancel or successfully login
         while True:
             loginScreen  = LoginScreen()
             loginScreen.edit()
@@ -30,6 +31,7 @@ class App(npyscreen.NPSApp):
             else:
                 break
 
+        # launch main screen
         mainScreen = MainScreen("[" + nickname + " as " + role + "]")
         mainScreen.edit();
 
@@ -42,11 +44,11 @@ class App(npyscreen.NPSApp):
 
     # login to remote server
     def login(self, address):
-        return True;
+        return False;
 
     # launch the node itself
     def launch(self):
-        return False
+        return True
 
 if __name__ == "__main__":
     App = App()
