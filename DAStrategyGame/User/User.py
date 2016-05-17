@@ -97,3 +97,15 @@ class User(Singleton):
         print 'Mineral: %d' % self.__mineral
         print 'Leather: %d' % self.__leather
         print 'Money: %d' % self.__money
+
+    def get_trading_center(self):
+        return self.__trading_center
+
+
+    def put_resource_into_trading_center(self, resource, quantity, price):
+        self.__trading_center.set_resource_to_sell(resource, quantity, price)
+        self.consume_resources(resource, quantity)
+
+    def get_resource_from_trading_center_back(self, resource, quantity):
+        self.__trading_center.consume_resources(resource, quantity)
+        self.add_resources(resource, quantity)

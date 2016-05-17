@@ -143,6 +143,8 @@ class Node(object):
             except KeyboardInterrupt:
                 break
             thread.start_new_thread(self.handle_client, (client, addr,))
+    def get_user(self):
+        return self.__user
 
 
 def main(argv):
@@ -153,12 +155,21 @@ def main(argv):
         ws = line.split()
         if ws[0] == 'connect':
             node.send_message((ws[1], int(ws[2])), node.msg.requireNodeList())
+
         elif ws[0] == 'nodelist':
             logging.info('current local node list: %s' % node.nodeList)
         elif ws[0] == 'logout':
             for n in node.nodeList:
                 node.send_message((n[1], n[2]), node.msg.logout())
             logging.info('logged out. bye.')
+        elif ws[0] == 'show_resources':
+            logging.info(node.get_user().show_resources())
+        elif ws[0] == 'show_trading_center':
+            logging.info(node.get_user().get_trading_center().show_trading_center())
+        elif ws[0] == 'put_resource_to_sell':
+            node.get_user().put_resource_into_trading_center(ws[1], int(ws[2]), int(ws[3]))
+        elif ws[0] == 'get_resource_back_from_trading_center':
+            node.get_user().get_resource_from_trading_center_back(int(ws[1]), int(ws[2]))
 
 
 if __name__ == '__main__':
