@@ -33,7 +33,7 @@ class Node(object):
         self._nodeList = []  # [(uuid:int, ip:str, port:int, nickname:str)]
         self._port = port
         self._uuid = int(round(time.time() * 1000))
-        self._msg = message.Message(self._uuid, port)
+        self._msg = message.Message(self._uuid, port, self._nickname)
         self._server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._server.bind(('0.0.0.0', port))
         self._server.listen(5)
@@ -80,7 +80,7 @@ class Node(object):
     def handle_client(self, client_socket, addr):
         request = client_socket.recv(1024 * 1024)
         logging.info('received %s' % request)
-        msg = self.msg.parse(response)
+        msg = self.msg.parse(request)
         self.handle_message(client_socket, addr, msg)
         client_socket.close()
 
