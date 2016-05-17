@@ -49,6 +49,10 @@ class Node(object):
     def nodeList(self):
         return self._nodeList
 
+    @property
+    def get_user(self):
+        return self._user
+
     def listen(self):
         while True:
             logging.info('Listening...')
@@ -171,9 +175,6 @@ class Node(object):
         return False
     # end of helpers
 
-    def get_user(self):
-        return self._user
-
 def main(argv):
     node = Node(argv[1], int(argv[2]))
     # for debug only
@@ -190,17 +191,17 @@ def main(argv):
                 node.send_message((n[1], n[2]), node.msg.logout())
             logging.info('logged out. bye.')
         elif ws[0] == 'show_resources':
-            logging.info(node.get_user().show_resources())
+            logging.info(node.get_user.show_resources())
         elif ws[0] == 'show_trading_center':
-            logging.info(node.get_user().get_trading_center().show_trading_center())
+            logging.info(node.get_user.get_trading_center().show_trading_center())
         elif ws[0] == 'put_resource_to_sell':
-            node.get_user().put_resource_into_trading_center(ws[1], int(ws[2]), int(ws[3]))
+            node.get_user.put_resource_into_trading_center(ws[1], int(ws[2]), int(ws[3]))
         elif ws[0] == 'get_resource_back_from_trading_center':
-            node.get_user().get_resource_from_trading_center_back(int(ws[1]), int(ws[2]))
+            node.get_user.get_resource_from_trading_center_back(int(ws[1]), int(ws[2]))
         elif ws[0] == 'get_trading_list':
             node.send_message((ws[1], int(ws[2])), node.msg.showTradingCenter())
         elif ws[0] == 'buy':
-            transaction = Transactions(ws[1], node._msg, node, node.get_user())
+            transaction = Transactions(ws[1], node._msg, node, node.get_user)
             transaction.start_transaction(ws[2], ws[3])
 
 
