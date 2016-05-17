@@ -3,7 +3,9 @@
 
 import npyscreen
 
-class MainScreen(npyscreen.Form):
+class MainScreen(npyscreen.SplitForm):
 
-    def __init__(self):
-        npyscreen.Form.__init__(self, name = "Tradercraft")
+    def __init__(self, name):
+        npyscreen.SplitForm.__init__(self, name="Tradercraft " + name)
+
+        self.MOVE_LINE_ON_RESIZE = True
