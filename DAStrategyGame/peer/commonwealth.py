@@ -1,28 +1,29 @@
-# coding=UTF-8
+#coding=UTF-8
 
-import socket, thread, time, logging
+import sys, socket, thread, time, logging
+import threading
 import message
-import sys
-sys.path.append("../")
-
-from User.User import User
+from bank import Bank
+import types
 
 logging.getLogger().setLevel(logging.INFO)
-
 
 class Node:
     def __init__(self, nickname, port):
         self.__nickname = nickname
-        self.__nodeList = []  # [(nickname:int, ip:str, port:int)]
+        self.__nodeList = [] # [(nickname:int, ip:str, port:int)]
         self.__port = port
         self.__uuid = int(round(time.time() * 1000))
         self.__msg = message.Message(self.__uuid, port)
         self.__server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__server.bind(('0.0.0.0', port))
         self.__server.listen(5)
-        self.__user = User()
-        print self.__user.show_resources()
         thread.start_new_thread(self.listen, ())
+        thread.start_new_thread(self.node_main, ())
+        self.bank = Bank()
+        self.cl_list = []
+        self.addr_list = []
+        self.mylock = threading.RLock()
 
     @property
     def msg(self):
@@ -36,13 +37,13 @@ class Node:
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         client.connect(addr)
         client.send(msg)
-        response = client.recv(1024 * 1024)
+        response = client.recv(1024*1024)
         logging.info(response)
         self.handle_message(client, addr, response)
         client.close()
 
     def handle_client(self, client_socket, addr):
-        request = client_socket.recv(1024 * 1024)
+        request = client_socket.recv(1024*1024)
         logging.info('received %s' % request)
         self.handle_message(client_socket, addr, request)
         client_socket.close()
@@ -96,6 +97,12 @@ class Node:
             elif msg['type'] == 'confirmFinishTransaction':
                 socket.send(self.msg.confirmFinishTransaction())
 
+            # activate the cdkey
+            elif msg['type'] == 'activate':
+                self.mylock.acquire()
+                logging.info('%s'%self.bank.activate_cdkey(msg['cdkey']))
+                self.mylock.release()
+
     def deleteNode(self, uuid):
         for node in self.nodeList:
             if node[0] == uuid:
@@ -108,16 +115,30 @@ class Node:
                 return True
         return False
 
+
     def listen(self):
         while True:
             logging.info('Listening...')
             try:
                 client, addr = self.__server.accept()
                 logging.info('connection from: %s:%d' % (addr[0], addr[1]))
+                self.cl_list.append(client)
+                self.addr_list.append(addr)
             except KeyboardInterrupt:
                 break
-            thread.start_new_thread(self.handle_client, (client, addr,))
 
+    def node_main(self):
+        while True:
+            if self.cl_list and self.addr_list:
+                self.handle_client(self.cl_list[0], self.addr_list[0])
+                del(self.cl_list[0])
+                del (self.addr_list[0])
+
+    def is_num(self, argv):
+        for i in range(len(argv)):
+            if not '0' <= argv[i] <= '9':
+                return True
+        return False
 
 def main(argv):
     node = Node(argv[1], int(argv[2]))
@@ -125,15 +146,29 @@ def main(argv):
     while True:
         line = sys.stdin.readline()
         ws = line.split()
-        if ws[0] == 'connect':
-            node.send_message((ws[1], int(ws[2])), node.msg.requireNodeList())
-        elif ws[0] == 'nodelist':
-            logging.info('current local node list: %s' % node.nodeList)
-        elif ws[0] == 'logout':
-            for n in node.nodeList:
-                node.send_message((n[1], n[2]), node.msg.logout())
-            logging.info('logged out. bye.')
 
+        # create cdkey
+        if ws[0] == "create" and len(ws)==3:
+            node.mylock.acquire()
+            if node.is_num(ws[2]):
+                logging.info("balance should be num")
+            else:
+                logging.info("%s" % node.bank.create_balance(ws[1], ws[2]))
+            node.mylock.release()
+
+        # delete cdkey
+        elif ws[0] == "delete" and len(ws)==2:
+            node.mylock.acquire()
+            logging.info("%s"%node.bank.delete_balance(ws[1]))
+            node.mylock.release()
+
+        # get cdkey list
+        elif ws[0] == "list" and len(ws)==1:
+            logging.info("we have the available list as: %s" % node.bank.cdkey_list)
+
+        # other commands are wrong
+        else:
+            print "wrong command"
 
 if __name__ == '__main__':
     main(sys.argv)
