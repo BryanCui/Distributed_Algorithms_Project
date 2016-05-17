@@ -186,13 +186,14 @@ def main(argv):
         ws = line.split()
         if ws[0] == 'connect':
             node.send_message((ws[1], int(ws[2])), node.msg.requireNodeList())
-
         elif ws[0] == 'nodelist':
             logging.info('current local node list: %s' % node.nodeList)
         elif ws[0] == 'logout':
             for n in node.nodeList:
                 node.send_message((n[1], n[2]), node.msg.logout())
             logging.info('logged out. bye.')
+        elif ws[0] == 'show':
+            logging.info(node.send_message((ws[1], int(ws[2])), node.msg.showTradingCenter()))
         elif ws[0] == 'resource':
             logging.info(node.user.show_resources())
         elif ws[0] == 'trading_center':
