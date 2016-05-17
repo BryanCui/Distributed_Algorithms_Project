@@ -1,3 +1,5 @@
+import csv
+
 class Bank():
     def __init__(self):
         self.cdkey_list = dict()
@@ -39,3 +41,16 @@ class Bank():
             return "delete active_no"
         except Exception, e:
             print e
+
+    # batch import Cdkeys
+    def insertCdkeys(self, path):
+        csvfile = file(path, 'r')
+        cr = csv.reader(csvfile)
+        try:
+            for line in cr:
+                if len(line) == 2:
+                    if line[0] not in self.cdkey_list:
+                        self.cdkey_list[line[0]] = line[1]
+            return "Successfully Import"
+        except Exception as e:
+            print "Invalid File"
