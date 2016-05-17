@@ -57,11 +57,11 @@ class Command(object):
         return self.node.nodeList
 
     def localResource(self):
-        pass
-        # return self.node.user.resources()    
+        return self.node.user.resources()    
 
     def remoteNodeResource(self, addr):
-
+        response = self.node.send_message(addr, self.node.msg.showTradingCenter())
+        return response['tradingList']
 
 
     # login nickname role address(ip:port)
