@@ -78,3 +78,11 @@ class Transaction:
 
     def get_transaction_status(self):
         return self.__transaction_status
+
+    def put_resource_into_trading_center(self, resource, quantity, price):
+        self.__tradingCenter.set_resource_to_sell(resource, quantity, price)
+        self.__user.consume_resources(resource, quantity)
+
+    def get_resource_from_trading_center(self, resource, quantity):
+        self.__tradingCenter.consume_resources(resource, quantity)
+        self.__user.add_resources(resource, quantity)
