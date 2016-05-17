@@ -45,6 +45,8 @@ class Node(object):
     def nodeList(self):
         return self._nodeList
 
+
+
     def listen(self):
         while True:
             logging.info('Listening...')
@@ -84,10 +86,6 @@ class Node(object):
             logging.info('add node (%d,%s,%d)' % node)
 
         if (msg_level, msg_type) in router:
-            logging.info(self)
-            logging.info(type(self))
-            logging.info(type(self).__name__)
-            # cls = globals()[type(self).__name__]
             cls = self.__class__
             func = cls.__dict__[router[(msg_level, msg_type)]]
             apply(func, (self, socket, addr, node, msg))

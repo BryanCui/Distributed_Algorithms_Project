@@ -9,7 +9,7 @@ import types
 import node
 
 router = node.router
-router['app', 'activate'] = 'onActivate'
+router[('app', 'activate')] = 'onActivate'
 
 logging.getLogger().setLevel(logging.INFO)
 
