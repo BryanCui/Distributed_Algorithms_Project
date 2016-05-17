@@ -2,9 +2,10 @@
 
 
 from TradingCenter import TradingCenter
+from Singleton import Singleton
 
 
-class User:
+class User(Singleton):
     def __init__(self):
         self.__food = 1000
         self.__wood = 1000
