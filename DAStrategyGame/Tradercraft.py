@@ -2,9 +2,9 @@
 # encoding: utf-8
 
 import npyscreen
-from screens.LoginScreen import LoginScreen
-from screens.CreateUserScreen import CreateUserScreen
-from screens.MainScreen import MainScreen
+from GUI.LoginScreen import LoginScreen
+from GUI.CreateUserScreen import CreateUserScreen
+from GUI.MainScreen import MainScreen
 
 class App(npyscreen.NPSApp):
     def main(self):
