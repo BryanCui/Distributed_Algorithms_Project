@@ -9,8 +9,21 @@ from User.User import User
 
 logging.getLogger().setLevel(logging.INFO)
 
+router = {
+    ('app', 'requireNodeList'): 'onRequireNodeList',
+    ('app', 'provideNodeList'): 'onProvideNodeList',
+    ('app', 'logout'): 'onLogout',
+    ('app', 'ack'): 'onAck',
+    ('snapshot', ''): '',
+    ('transaction', 'startTransaction'): 'onStartTransaction',
+    ('transaction', 'confirmStartTransaction'): 'onConfirmStartTransaction',
+    ('transaction', 'buyResource'): 'onBuyResource',
+    ('transaction', 'finishTransaction'): 'onFinishTransaction',
+    ('transaction', 'confirmFinishTransaction'): 'onConfirmFinishTransaction'
+}
 
-class Node:
+
+class Node(object):
     def __init__(self, nickname, port):
         self.__nickname = nickname
         self.__nodeList = []  # [(nickname:int, ip:str, port:int)]
@@ -50,51 +63,65 @@ class Node:
     def handle_message(self, socket, addr, msg):
         msg = self.msg.parse(msg)
         node = (msg['uuid'], addr[0], msg['port'])
+        msg_level = msg['level']
+        msg_type = msg['type']
+
+        logging.info('receive msg: %s' % msg)
+
         # check if this message is from an unknown node, add it to nodeList
         if not self.hasNode(msg['uuid']):
             self.nodeList.append(node)
             logging.info('add node (%d,%s,%d)' % node)
 
-        if msg['level'] == 'app':
-            logging.info('receive msg type: %s' % msg['type'])
-            if msg['type'] == 'requireNodeList':
-                # reply with local node list
-                socket.send(self.msg.provideNodeList(self.nodeList))
-                logging.info('send: %s' % self.msg.provideNodeList(self.nodeList))
-            elif msg['type'] == 'provideNodeList':
-                # update local node list
-                logging.info('before updating node list: %s' % self.nodeList)
-                for node in msg['list']:
-                    if not self.hasNode(node[0]) and node[0] != self.__uuid:
-                        self.nodeList.append(node)
-                logging.info('updated node list: %s' % self.nodeList)
-            elif msg['type'] == 'logout':
-                # delete node
-                self.deleteNode(msg['uuid'])
-                socket.send(self.msg.ack())
-                logging.info('deleted node (%d,%s,%d)' % node)
-            elif msg['type'] == 'ack':
-                # do nothing yet
-                pass
-            else:
-                logging.info('do nothing')
-        elif msg['level'] == 'snapshot':
-            logging.info('todo')
-        elif msg['level'] == 'transaction':
-            if msg['type'] == 'startTransaction':
-                socket.send(self.msg.confirmStartTransaction())
-            elif msg['type'] == 'confirmStartTransaction':
-                resource = msg['resource']
-                quantity = msg['quantity']
-                socket.send(self.msg.buyResource(resource, quantity))
-            elif msg['type'] == 'buyResource':
-                resource = msg['resource']
-                quantity = msg['quantity']
-                socket.send(self.msg.sellResource(resource, quantity))
-            elif msg['type'] == 'finishTransaction':
-                socket.send(self.msg.finishTransaction())
-            elif msg['type'] == 'confirmFinishTransaction':
-                socket.send(self.msg.confirmFinishTransaction())
+        if (msg_level, msg_type) in router:
+            logging.info(self)
+            logging.info(type(self))
+            logging.info(type(self).__name__)
+            cls = globals()[type(self).__name__]
+            func = cls.__dict__[router[(msg_level, msg_type)]]
+            apply(func, (self, socket, addr, node, msg))
+
+    def onRequireNodeList(self, socket, addr, node, msg):
+        # reply with local node list
+        socket.send(self.msg.provideNodeList(self.nodeList))
+        logging.info('send: %s' % self.msg.provideNodeList(self.nodeList))
+
+    def onProvideNodeList(self, socket, addr, node, msg):
+        # update local node list
+        logging.info('before updating node list: %s' % self.nodeList)
+        for node in msg['list']:
+            if not self.hasNode(node[0]) and node[0] != self.__uuid:
+                self.nodeList.append(node)
+        logging.info('updated node list: %s' % self.nodeList)
+
+    def onLogout(self, socket, addr, node, msg):
+        # delete node
+        self.deleteNode(msg['uuid'])
+        socket.send(self.msg.ack())
+        logging.info('deleted node (%d,%s,%d)' % node)
+
+    def onAck(self, socket, addr, node, msg):
+        # do nothing yet
+        pass
+
+    def onStartTransaction(self, socket, addr, node, msg):
+        socket.send(self.msg.confirmStartTransaction())
+
+    def onConfirmStartTransaction(self, socket, addr, node, msg):
+        resource = msg['resource']
+        quantity = msg['quantity']
+        socket.send(self.msg.buyResource(resource, quantity))
+
+    def onBuyResource(self, socket, addr, node, msg):
+        resource = msg['resource']
+        quantity = msg['quantity']
+        socket.send(self.msg.sellResource(resource, quantity))
+
+    def onFinishTransaction(self, socket, addr, node, msg):
+        socket.send(self.msg.finishTransaction())
+
+    def onConfirmFinishTransaction(self, socket, addr, node, msg):
+        socket.send(self.msg.confirmFinishTransaction())
 
     def deleteNode(self, uuid):
         for node in self.nodeList:
