@@ -90,6 +90,12 @@ def main(argv):
         # send msg
         elif ws[0] == "activate" and len(ws)==4:
             node.send_message((ws[1], int(ws[2])), node.msg.activateCdkey(ws[3]))
+
+        # send msg
+        elif ws[0] == "import" and len(ws) == 2:
+            node.mylock.acquire()
+            logging.info("%s"%node.bank.insertCdkeys(ws[1]))
+            node.mylock.release()
         # other commands are wrong
         else:
             print "wrong command"
