@@ -28,9 +28,9 @@ router = {
 
 
 class Node(object):
-    def __init__(self, nickname, port):
+    def __init__(self, nickname, role, port):
         self._nickname = nickname
-        self._nodeList = []  # [(nickname:int, ip:str, port:int)]
+        self._nodeList = []  # [(uuid:int, ip:str, port:int, nickname:str)]
         self._port = port
         self._uuid = int(round(time.time() * 1000))
         self._msg = message.Message(self._uuid, port)
@@ -64,23 +64,28 @@ class Node(object):
             thread.start_new_thread(self.handle_client, (client, addr,))
 
     def send_message(self, addr, msg):
-        client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        client.connect(addr)
-        client.send(msg)
-        response = client.recv(1024 * 1024)
-        logging.info(response)
-        self.handle_message(client, addr, response)
-        client.close()
+        try:
+            client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            client.connect(addr)
+            client.send(msg)
+            response = client.recv(1024 * 1024)
+            logging.info(response)
+            msg = self.msg.parse(response)
+            self.handle_message(client, addr, msg)
+            client.close()
+            return msg
+        except:
+            return False
 
     def handle_client(self, client_socket, addr):
         request = client_socket.recv(1024 * 1024)
         logging.info('received %s' % request)
-        self.handle_message(client_socket, addr, request)
+        msg = self.msg.parse(response)
+        self.handle_message(client_socket, addr, msg)
         client_socket.close()
 
     def handle_message(self, socket, addr, msg):
-        msg = self.msg.parse(msg)
-        node = (msg['uuid'], addr[0], msg['port'])
+        node = (msg['uuid'], addr[0], msg['port'], msg['nickname'])
         msg_level = msg['level']
         msg_type = msg['type']
 
@@ -89,7 +94,7 @@ class Node(object):
         # check if this message is from an unknown node, add it to nodeList
         if not self.hasNode(msg['uuid']):
             self.nodeList.append(node)
-            logging.info('add node (%d,%s,%d)' % node)
+            logging.info('add node (%d,%s,%d,%s)' % node)
 
         if (msg_level, msg_type) in router:
             cls = self.__class__
@@ -114,7 +119,7 @@ class Node(object):
         # delete node
         self.deleteNode(msg['uuid'])
         socket.send(self.msg.ack())
-        logging.info('deleted node (%d,%s,%d)' % node)
+        logging.info('deleted node (%d,%s,%d,%s)' % node)
 
     def onAck(self, socket, addr, node, msg):
         # do nothing yet
@@ -174,7 +179,7 @@ class Node(object):
     # end of helpers
 
 def main(argv):
-    node = Node(argv[1], int(argv[2]))
+    node = Node(argv[1], 'role', int(argv[2]))
     # for debug only
     while True:
         line = sys.stdin.readline()
