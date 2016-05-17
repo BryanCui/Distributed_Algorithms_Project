@@ -6,20 +6,20 @@ from Singleton import Singleton
 class TradingCenter(Singleton):
 
     def __init__(self):
-        self.__food = [0, 0]
-        self.__wood = [0, 0]
-        self.__mineral = [0, 0]
-        self.__leather = [0, 0]
+        self.__food = [0, 0, 'food']
+        self.__wood = [0, 0, 'wood']
+        self.__mineral = [0, 0, 'mineral']
+        self.__leather = [0, 0, 'leather']
 
     def set_resource_to_sell(self, resource, quantity, price):
         if resource == 'food':
-            self.__food = [self.__food[0]+quantity, price]
+            self.__food = [self.__food[0]+quantity, price, 'food']
         elif resource == 'wood':
-            self.__wood = [self.__wood[0]+quantity, price]
+            self.__wood = [self.__wood[0]+quantity, price, 'wood']
         elif resource == 'mineral':
-            self.__mineral = [self.__mineral[0]+quantity, price]
+            self.__mineral = [self.__mineral[0]+quantity, price, 'mineral']
         elif resource == 'leather':
-            self.__leather = [self.__leather[0]+quantity, price]
+            self.__leather = [self.__leather[0]+quantity, price, 'leather']
 
     def get_food_price(self):
         return self.__food[1]
@@ -77,4 +77,8 @@ class TradingCenter(Singleton):
         return money
 
     def get_trading_list(self):
-        return [self.__food, self.__wood, self.__mineral, self.__leather]
+        return {'food':(self.__food[0], self.__food[1]),
+                'wood':(self.__wood[0], self.__wood[1]),
+                'mineral':(self.__mineral[0], self.__mineral[1]),
+                'leather':(self.__leather[0], self.__leather[1])}
+        #return [self.__food, self.__wood, self.__mineral, self.__leather]

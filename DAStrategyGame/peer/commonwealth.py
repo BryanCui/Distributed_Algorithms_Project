@@ -15,6 +15,7 @@ logging.getLogger().setLevel(logging.INFO)
 
 class BankNode(node.Node):
     def __init__(self, nickname, port):
+        # over
         super(BankNode, self).__init__(nickname, port)
         thread.start_new_thread(self.node_main, ())
         self.bank = Bank()
@@ -25,7 +26,14 @@ class BankNode(node.Node):
     def onActivate(self, socket, addr, node, msg):
         # activate the cdkey
         self.mylock.acquire()
-        logging.info('%s'%self.bank.activate_cdkey(msg['cdkey']))
+        result = self.bank.activate_cdkey(msg['cdkey'])
+        # if it is num
+        if not self.is_num(result):
+            socket.send(self.msg.answerActivate(balance=result))
+        # if it is not num, then error.
+        else:
+            socket.send(self.msg.answerActivate(info=result))
+        logging.info('%s'%result)
         self.mylock.release()
 
     def listen(self):
@@ -46,7 +54,7 @@ class BankNode(node.Node):
                 self.handle_client(self.cl_list[0], self.addr_list[0])
                 del(self.cl_list[0])
                 del (self.addr_list[0])
-
+    # Not Num : True; Num: False
     def is_num(self, argv):
         for i in range(len(argv)):
             if not '0' <= argv[i] <= '9':
@@ -82,6 +90,12 @@ def main(argv):
         # send msg
         elif ws[0] == "activate" and len(ws)==4:
             node.send_message((ws[1], int(ws[2])), node.msg.activateCdkey(ws[3]))
+
+        # send msg
+        elif ws[0] == "import" and len(ws) == 2:
+            node.mylock.acquire()
+            logging.info("%s"%node.bank.insertCdkeys(ws[1]))
+            node.mylock.release()
         # other commands are wrong
         else:
             print "wrong command"
