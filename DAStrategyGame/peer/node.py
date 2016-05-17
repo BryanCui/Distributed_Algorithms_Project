@@ -125,6 +125,8 @@ class Node(object):
     def onBuyResource(self, socket, addr, node, msg):
         resource = msg['resource']
         quantity = msg['quantity']
+        self.get_user().get_trading_center().consume_resources(resource, int(quantity))
+        self.get_user().add_money(self.get_user().get_trading_center().earn_money(resource,int(quantity)))
         socket.send(self.msg.sellResource(resource, quantity))
 
     def onFinishTransaction(self, socket, addr, node, msg):
