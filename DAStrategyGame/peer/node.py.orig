@@ -147,8 +147,23 @@ class Node(object):
             if node[0] == uuid:
                 return True
         return False
+<<<<<<< HEAD
+
+    def listen(self):
+        while True:
+            logging.info('Listening...')
+            try:
+                client, addr = self.__server.accept()
+                logging.info('connection from: %s:%d' % (addr[0], addr[1]))
+            except KeyboardInterrupt:
+                break
+            thread.start_new_thread(self.handle_client, (client, addr,))
+    def get_user(self):
+        return self.__user
+=======
     # end of helpers
     
+>>>>>>> 18d776cad6e367c8069266f74757ea2dc99488af
 
 
 def main(argv):
