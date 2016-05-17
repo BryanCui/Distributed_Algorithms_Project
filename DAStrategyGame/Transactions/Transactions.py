@@ -3,7 +3,7 @@
 from User.Resource import *
 
 
-class Transaction:
+class Transactions:
     __food = 0
     __wood = 0
     __mineral = 0
@@ -18,23 +18,23 @@ class Transaction:
         self.__user = user
 
     def start_transaction(self, resource, quantity):
-        self.__node.send_message(self, self.__host, self.__MSG.startTransaction(resource, quantity))
+        self.__node.send_message(self.__host, self.__MSG.startTransaction(resource, quantity))
 
     def confirm_start_transaction(self, resource, quantity):
-        self.__node.send_message(self, self.__host, self.__MSG.confirmStartTransaction(resource, quantity))
+        self.__node.send_message(self.__host, self.__MSG.confirmStartTransaction(resource, quantity))
 
     def end_transaction(self):
-        self.__node.send_message(self, self.__host, self.__MSG.finishTransaction())
+        self.__node.send_message(self.__host, self.__MSG.finishTransaction())
 
     def confirm_end_transaction(self):
         self.set_transaction_finished_status(True)
-        self.__node.send_message(self, self.__host, self.__MSG.confirmFinishTransaction())
+        self.__node.send_message(self.__host, self.__MSG.confirmFinishTransaction())
 
     def buy_resource(self, resource, quantity):
         self.set_transaction_status('buy')
         self.set_transaction_finished_status(False)
 
-        self.__node.send_message(self, self.__host, self.__MSG.buyResource(self, resource, quantity))
+        self.__node.send_message(self.__host, self.__MSG.buyResource(self, resource, quantity))
         self.__user.add_resources(resource, quantity)
         current_resource = Resource(resource)
         self.__user.consume_money(current_resource.getPrice() * quantity)
@@ -43,7 +43,7 @@ class Transaction:
         self.set_transaction_status('sell')
         self.set_transaction_finished_status(False)
 
-        self.__node.send_message(self, self.__host, self.__MSG.sellResource(self, resource, quantity))
+        self.__node.send_message(self.__host, self.__MSG.sellResource(self, resource, quantity))
         current_resource = Resource(resource)
         trading_center.consume_resources(resource, quantity)
         self.__user.add_money(current_resource.getPrice() * quantity)

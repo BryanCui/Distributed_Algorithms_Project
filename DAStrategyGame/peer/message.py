@@ -28,11 +28,11 @@ class Message:
         return json.dumps(msg)
 
     def startTransaction(self, resource, quantity):
-        msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'app', 'type': 'startTransaction', 'resource':resource, 'quantity': quantity}
+        msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'app', 'type': 'startTransaction', 'resource': resource, 'quantity': quantity}
         return json.dumps(msg)
 
     def confirmStartTransaction(self, resource, quantity):
-        msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'app', 'type': 'confirmStartTransaction', 'resource':resource, 'quantity': quantity}
+        msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'app', 'type': 'confirmStartTransaction', 'resource': resource, 'quantity': quantity}
         return json.dumps(msg)
 
     def finishTransaction(self):

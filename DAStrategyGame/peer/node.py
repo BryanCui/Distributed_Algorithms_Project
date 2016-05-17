@@ -6,7 +6,7 @@ import sys
 sys.path.append("../")
 
 from User.User import User
-from Transactions import Transactions
+from Transactions.Transactions import Transactions
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -121,27 +121,28 @@ class Node(object):
         pass
 
     def onStartTransaction(self, socket, addr, node, msg):
-        socket.send(self.msg.confirmStartTransaction())
+        socket.send(self.msg.confirmStartTransaction(msg['resource'], int(msg['quantity'])))
 
     def onConfirmStartTransaction(self, socket, addr, node, msg):
         resource = msg['resource']
-        quantity = msg['quantity']
-        socket.send(self.msg.buyResource(resource, quantity))
+        quantity = int(msg['quantity'])
+        self.send_message(addr, self.msg.buyResource(resource, quantity))
 
     def onBuyResource(self, socket, addr, node, msg):
         resource = msg['resource']
-        quantity = msg['quantity']
-        self.get_user().get_trading_center().consume_resources(resource, int(quantity))
-        self.get_user().add_money(self.get_user().get_trading_center().earn_money(resource,int(quantity)))
-        socket.send(self.msg.sellResource(resource, quantity, self.get_user().get_trading_center().get_resources_price(resource)))
+        quantity = int(msg['quantity'])
+
+        self.user.get_trading_center().consume_resources(resource, quantity)
+        self.user.add_money(self.user.get_trading_center().earn_money(resource,quantity))
+        socket.send(self.msg.sellResource(resource, quantity, self.user.get_trading_center().get_resources_price(resource)))
 
     def onSellResource(self, socket, addr, node, msg):
         resource = msg['resource']
-        quantity = msg['quantity']
+        quantity = int(msg['quantity'])
         price = msg['price']
-        self.get_user().add_resources(resource, int(quantity))
-        self.get_user().consume_money(int(price) * int(quantity))
-        socket.send(self.msg.finishTransaction())
+        self.user.add_resources(resource, quantity)
+        self.user.consume_money(int(price) * quantity)
+        self.send_message(addr, self.msg.finishTransaction())
 
     def onFinishTransaction(self, socket, addr, node, msg):
         socket.send(self.msg.confirmFinishTransaction())
@@ -150,10 +151,11 @@ class Node(object):
         return
 
     def onShowTradingCenter(self, socket, addr, node, msg):
-        socket.send(self.msg.returnTradingCenter(self.get_user().get_trading_center().get_trading_list()))
+        socket.send(self.msg.returnTradingCenter(self.user.get_trading_center().get_trading_list()))
 
     def onReturnTradingCenter(self, socket, addr, node, msg):
-        logging.info(msg['tradingList'])
+        for item in msg['tradingList']:
+            logging.info(item[2] + ': ' + str(item[0]) + ', Price: ' + str(item[1]))
     # end of handlers
 
 
@@ -193,12 +195,12 @@ def main(argv):
         elif ws[0] == 'put_resource_to_sell':
             node.user.put_resource_into_trading_center(ws[1], int(ws[2]), int(ws[3]))
         elif ws[0] == 'get_resource_back_from_trading_center':
-            node.user.get_resource_from_trading_center_back(int(ws[1]), int(ws[2]))
+            node.user.get_resource_from_trading_center_back(ws[1], int(ws[2]))
         elif ws[0] == 'get_trading_list':
             node.send_message((ws[1], int(ws[2])), node.msg.showTradingCenter())
         elif ws[0] == 'buy':
-            transaction = Transactions(ws[1], node._msg, node, node.user)
-            transaction.start_transaction(ws[2], ws[3])
+            transaction = Transactions((ws[1], int(ws[2])), node._msg, node, node.user)
+            transaction.start_transaction(ws[3], ws[4])
 
 
 if __name__ == '__main__':
