@@ -32,7 +32,8 @@ class Message:
         return json.dumps(msg)
 
     def answerActivate(self, info='success', balance='0'):
-        msg = {'uuid': self.__uuid, 'port': self.__port, 'level': 'app', 'type': 'answerActivate','info': info , 'balance': balance}
+        msg = {'level': 'app', 'type': 'answerActivate','info': info , 'balance': balance}
+        msg.update(self.basic())
         return json.dumps(msg)
 
     def activateCdkey(self, cdkey):
