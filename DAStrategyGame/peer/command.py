@@ -14,6 +14,8 @@ route = {
     'remoteNodeResource': 'remoteNodeResource',
     'startSnapshot': 'startSnapshot',
     'checkAlive': 'checkAlive',
+    'toTrade': 'toTrade',
+    ''
     'logout': 'logout'
 }
 
@@ -76,7 +78,18 @@ class Command(object):
         return self.node.checkAlive()
 
     def logout(self):
-        return self.node.logout()
+        result = self.node.logout()
+        sys.exit(0)
+        return result
+
+    def toTrade(self, resource, num, price):
+        return self.node.user.put_resource_into_trading_center(resource, int(num), int(price))
+
+    def toStock(self, resource, num):
+        return self.node.user.get_resource_from_trading_center_back(resource, int(num))
+
+    def buy(self, addr, resource, num):
+
 
     def test(self, info):
         logging.info('finished!!!!!!!!')
