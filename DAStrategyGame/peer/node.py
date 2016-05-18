@@ -24,6 +24,7 @@ router = {
     ('app', 'doneTransaction'): 'onDoneTransaction',
     ('app', 'showTradingCenter'): 'onShowTradingCenter',
     ('app', 'returnTradingCenter'): 'onReturnTradingCenter',
+    ('app', 'returnActivate'): 'onReturnActivate',
     ('snapshot', ''): ''
 }
 
@@ -76,7 +77,8 @@ class Node(object):
             self.handle_message(client, addr, msg)
             client.close()
             return msg
-        except:
+        except Exception, e:
+            print e
             return False
 
     def handle_client(self, client_socket, addr):
@@ -146,6 +148,15 @@ class Node(object):
     def onSellResource(self, socket, addr, node, msg):
         self._transaction.finish_transaction(addr, msg)
 
+    # Handle the Return of Activate Info
+    def onReturnActivate(self, socket, addr, node, msg):
+        balance = int(msg['balance'])
+        if balance > 0:
+            self.user.add_money(balance)
+            self.user.show_resources()
+        logging.info("%s, withdraw %s "%(msg['info'],msg['balance']))
+
+
     def onFinishTransaction(self, socket, addr, node, msg):
         self._transaction.confirm_finish_transaction(socket)
 
@@ -201,6 +212,10 @@ def main(argv):
             logging.info(node.user.trading_center.show_trading_center())
         elif ws[0] == 'sell':
             node.user.put_resource_into_trading_center(ws[1], int(ws[2]), int(ws[3]))
+        # activate cdkey argv[3]: ip, port, cdkey
+        elif ws[0] == "activate" and len(ws) == 4:
+            node.send_message((ws[1], int(ws[2])), node.msg.activateCdkey(ws[3]))
+
         elif ws[0] == 'get_resource_back_from_trading_center':
             node.user.get_resource_from_trading_center_back(ws[1], int(ws[2]))
         elif ws[0] == 'get_trading_list':
