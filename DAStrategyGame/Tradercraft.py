@@ -67,13 +67,15 @@ class App(npyscreen.NPSApp):
             else:
                 break
 
+        # NotificationCentre.defaultCentre().addObserver('resource_change', self, 'updateInfo')
+        # NotificationCentre.defaultCentre().addObserver('trading_change', self, 'updateInfo')
+        NotificationCentre.defaultCentre().addObserver('SnapshotDidFinish', self, 'onSnapshot')
+
         #main screen
         self.c = CommandActive()
         self.c.wStatus1.value = "[" + self.nickname + " as " + self.role + "]"
         self.updateInfo()
         self.c.edit()
-
-        NotificationCentre.defaultCentre().addObserver('event', self, updateInfo)
 
         self.command.execute('logout')
 
@@ -100,8 +102,14 @@ class App(npyscreen.NPSApp):
             , int(self.address.split(":")[1]))
         return True
 
+    #when take snapshot
+    def onSnapshot(self, arg):
+        self.updateInfo()
+        self.c.wMain.values.append(arg['snapshot'].__dict__)
+        self.c.wMain.display()
+
     #refresh the people around you
-    def updateInfo(self):
+    def updateInfo(self, arg = None):
         info = []
 
         # people around

@@ -1,5 +1,7 @@
 # coding=UTF-8
 
+import sys, logging
+
 class NotificationCentre(object):
     centre = None
 
@@ -39,5 +41,7 @@ class NotificationCentre(object):
         for item in arr:
             cls = item['obj'].__class__
             func = cls.__dict__[item['func']]
+            logging.info(func)
+            logging.info(cls)
             apply(func, (item['obj'], info))
             
