@@ -130,8 +130,10 @@ class User(Singleton):
         if quantity >= 0 and quantity <= self.get_resources(resource):
             self.__trading_center.set_resource_to_sell(resource, quantity, price)
             self.consume_resources(resource, quantity)
+            return True
         else:
             logging.info('No enough resource!!')
+            return False
 
     # get resources back from trading center
     def get_resource_from_trading_center_back(self, resource, quantity):
