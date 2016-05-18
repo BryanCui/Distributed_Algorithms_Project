@@ -3,6 +3,7 @@
 import socket, thread, time, logging
 import message, snapshot
 import sys
+from notificationCentre import NotificationCentre
 sys.path.append("../")
 
 from User.User import User
@@ -11,6 +12,7 @@ from Transactions.Transactions import Transactions
 logging.getLogger().setLevel(logging.INFO)
 
 router = {
+    ('app', 'notifyNewNode'): 'onNotifyNewNode',
     ('app', 'requireNodeList'): 'onRequireNodeList',
     ('app', 'provideNodeList'): 'onProvideNodeList',
     ('app', 'logout'): 'onLogout',
@@ -24,13 +26,14 @@ router = {
     ('app', 'doneTransaction'): 'onDoneTransaction',
     ('app', 'showTradingCenter'): 'onShowTradingCenter',
     ('app', 'returnTradingCenter'): 'onReturnTradingCenter',
+    ('app', 'returnActivate'): 'onReturnActivate',
     ('snapshot', 'marker'): 'onMarker',
     'app': 'onApp',
 }
 
 
 class Node(object):
-    def __init__(self, nickname, role, port):
+    def __init__(self, nickname, port, role):
         self._nickname = nickname
         self._nodeList = []  # [(uuid:int, ip:str, port:int, nickname:str)]
         self._port = port
@@ -39,7 +42,7 @@ class Node(object):
         self._server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._server.bind(('0.0.0.0', port))
         self._server.listen(5)
-        self._user = User()
+        self._user = User(role)
         self._transaction = Transactions('', self._msg, self, self._user)
         self._lastLocalSnapshot = None
         print self._user.show_resources()
@@ -77,13 +80,15 @@ class Node(object):
             client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             client.connect(addr)
             client.send(msg)
+            logging.info('sending (%s:%d) msg: %s' % (addr[0], addr[1], msg))
             response = client.recv(1024 * 1024)
-            logging.info(response)
+            logging.info('received %s' % response)
             msg = self.msg.parse(response)
             self.handle_message(client, addr, msg)
             client.close()
             return msg
-        except:
+        except Exception, e:
+            print e
             return False
 
     def oneway_message(self, addr, msg):
@@ -91,6 +96,7 @@ class Node(object):
             client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             client.connect(addr)
             client.send(msg)
+            logging.info('sending (%s:%d) msg: %s' % (addr[0], addr[1], msg))
             return True
         except:
             return False
@@ -104,13 +110,17 @@ class Node(object):
 
     def handle_message(self, socket, addr, msg):
         node = (msg['uuid'], addr[0], msg['port'], msg['nickname'])
+        addr = (addr[0], msg['port'])
         msg_level = msg['level']
         msg_type = msg['type']
 
-        logging.info('receive msg: %s' % msg)
-
         # check if this message is from an unknown node, add it to nodeList
         if not self.hasNode(msg['uuid']) and self._uuid != msg['uuid']:
+            # notify the other node in my list
+            logging.info('fuck %s' % self.nodeList)
+            for n in self.nodeList:
+                self.oneway_message((n[1], n[2]), self.msg.notifyNewNode(node))
+
             self.nodeList.append(node)
             logging.info('add node (%d,%s,%d,%s)' % node)
 
@@ -125,6 +135,11 @@ class Node(object):
             apply(func, (self, socket, addr, node, msg))
 
     # begin handlers
+    def onNotifyNewNode(self, socket, addr, node, msg):
+        node = (msg['node']['uuid'], msg['node']['ip'], msg['node']['port'], msg['node']['nickname'])
+        self.nodeList.append(node)
+        logging.info('add node (%d,%s,%d,%s)' % node)
+
     def onRequireNodeList(self, socket, addr, node, msg):
         # reply with local node list
         socket.send(self.msg.provideNodeList(self.nodeList))
@@ -167,6 +182,15 @@ class Node(object):
     def onSellResource(self, socket, addr, node, msg):
         self._transaction.finish_transaction(addr, msg)
 
+    # Handle the Return of Activate Info
+    def onReturnActivate(self, socket, addr, node, msg):
+        balance = int(msg['balance'])
+        if balance > 0:
+            self.user.add_money(balance)
+            self.user.show_resources()
+        logging.info("%s, withdraw %s "%(msg['info'],msg['balance']))
+
+
     def onFinishTransaction(self, socket, addr, node, msg):
         self._transaction.confirm_finish_transaction(socket)
 
@@ -192,7 +216,7 @@ class Node(object):
             self.lastLocalSnapshot.finishRecord(node)
             # send marker to all known node
             for n in self.nodeList:
-                self.oneway_message((node[1], node[2]), self.msg.snapshotMarker())
+                self.oneway_message((n[1], n[2]), self.msg.snapshotMarker())
         else:
             # continue current snapshot
             self.lastLocalSnapshot.finishRecord(node)
@@ -246,7 +270,7 @@ class Node(object):
     # end of helpers
 
 def main(argv):
-    node = Node(argv[1], 'role', int(argv[2]))
+    node = Node(argv[1], int(argv[2]), argv[3])
     # for debug only
     while True:
         line = sys.stdin.readline()
@@ -267,6 +291,10 @@ def main(argv):
             logging.info(node.user.trading_center.show_trading_center())
         elif ws[0] == 'sell':
             node.user.put_resource_into_trading_center(ws[1], int(ws[2]), int(ws[3]))
+        # activate cdkey argv[3]: ip, port, cdkey
+        elif ws[0] == "activate" and len(ws) == 4:
+            node.send_message((ws[1], int(ws[2])), node.msg.activateCdkey(ws[3]))
+
         elif ws[0] == 'get_resource_back_from_trading_center':
             node.user.get_resource_from_trading_center_back(ws[1], int(ws[2]))
         elif ws[0] == 'get_trading_list':
@@ -279,4 +307,4 @@ def main(argv):
 
 
 if __name__ == '__main__':
-    main(sys.argv)
+        main(sys.argv)

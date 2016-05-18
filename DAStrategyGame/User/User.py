@@ -4,18 +4,20 @@
 from TradingCenter import TradingCenter
 from Singleton import Singleton
 from time import sleep
-import threading
+import thread
 
 
 class User(Singleton):
-    def __init__(self):
+    def __init__(self, role):
         self.__food = 1000
         self.__wood = 1000
         self.__mineral = 1000
         self.__leather = 1000
         self.__money = 10000
+        self.__role = role
         self.__trading_center = TradingCenter()
         self.food_consuming_thread()
+        self.role_thread(self.__role)
 
     @property
     def trading_center(self):
@@ -134,10 +136,30 @@ class User(Singleton):
         }
 
     def food_consuming_thread(self):
-        food_consuming_thread = threading.Thread(target=self.food_consuming)
-        food_consuming_thread.start()
+        thread.start_new_thread(self.food_consuming, ())
 
     def food_consuming(self):
         while True:
             sleep(15)
             self.__food -= 1
+
+    def role_thread(self, role):
+        thread.start_new_thread(self.role_character, ())
+
+    def role_character(self):
+        if self.__role == 'farmer':
+            while True:
+                sleep(10)
+                self.__food += 5
+        elif self.__role == 'lumberjack':
+            while True:
+                sleep(10)
+                self.__wood += 5
+        elif self.__role == 'miner':
+            while True:
+                sleep(10)
+                self.__mineral += 5
+        elif self.__role == 'fellmonger':
+            while True:
+                sleep(10)
+                self.__leather += 5

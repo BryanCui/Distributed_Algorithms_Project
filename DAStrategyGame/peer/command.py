@@ -1,6 +1,7 @@
 # coding=UTF-8
 
 import sys, logging
+from notificationCentre import NotificationCentre
 from node import Node
 logging.getLogger().setLevel(logging.INFO)
 
@@ -40,12 +41,12 @@ class Command(object):
 
     # begin commands
     def createGame(self, nickname, role, port):
-        node = Node(nickname, role, int(port))
+        node = Node(nickname, int(port), role)
         self._node = node
         return True
 
     def joinGame(self, nickname, role, port, addr):
-        node = Node(nickname, role, int(port))
+        node = Node(nickname, int(port), role)
         self._node = node
         response = node.send_message(addr, node.msg.requireNodeList())
         if response == False:
@@ -72,6 +73,11 @@ class Command(object):
     def logout(self):
         return self.node.logout()
 
+    def test(self, info):
+        logging.info('finished!!!!!!!!')
+        logging.info(info['snapshot'].localState)
+        logging.info(info['snapshot'].channelStates)
+
 
 
     # login nickname role address(ip:port)
@@ -81,6 +87,7 @@ class Command(object):
 
 def main(argv):
     command = Command()
+    NotificationCentre.defaultCentre().addObserver('SnapshotDidFinish', command, 'test')
     if len(argv) == 4:
         command.execute('createGame', argv[1], argv[2], int(argv[3]))
     elif len(argv) == 6:
@@ -90,6 +97,8 @@ def main(argv):
 
     while True:
         line = sys.stdin.readline()
+        if len(line) < 2:
+            continue
         ws = line.split()
         result = None
         if ws[0] == 'connect':
@@ -115,6 +124,8 @@ def main(argv):
         #     node._transaction.start_transaction(ws[3], ws[4])
         elif ws[0] == 'snapshot':
             result = command.execute('startSnapshot')
+        elif ws[0] == 'exit':
+            sys.exit(0)
         
         logging.info(result)
 
@@ -123,4 +134,7 @@ def main(argv):
 if __name__ == '__main__':
     # [command.py txx role port]
     # [command.py txx role port remoteIP remotePort]
-    main(sys.argv)
+    try:
+        main(sys.argv)
+    except KeyboardInterrupt:
+        sys.exit(0)
