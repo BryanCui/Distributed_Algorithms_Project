@@ -132,7 +132,8 @@ def main(argv):
             result = command.execute('startSnapshot')
         elif ws[0] == 'checkAlive':
             result = command.execute('checkAlive')
-            logging.info(result)
+        elif ws[0] == 'localResource':
+            result = command.execute('localResource')
         elif ws[0] == 'exit':
             sys.exit(0)
         
