@@ -1,6 +1,7 @@
 #Trading Center
 
 from Singleton import Singleton
+import logging
 
 
 class TradingCenter(Singleton):
@@ -54,6 +55,19 @@ class TradingCenter(Singleton):
             return self.__mineral[1]
         elif resource == 'leather':
             return self.__leather[1]
+
+    def get_resources(self, resource):
+        if resource == 'food':
+            return self.__food[0]
+        elif resource == 'wood':
+            return self.__wood[0]
+        elif resource == 'mineral':
+            return self.__mineral[0]
+        elif resource == 'leather':
+            return self.__leather[0]
+        else:
+            logging.info('Wrong resource name!')
+            return
 
     def set_resources(self, food, wood, mineral, leather):
         self.__food[0] = food
