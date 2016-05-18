@@ -23,7 +23,7 @@ class Message:
         return json.dumps(msg)
 
     def notifyNewNode(self, node):
-        msg = {'level': 'app', 'type': 'notifyNewNode', 'node': {'uuid': node[0], 'ip': node[1], 'port': node[2], 'nickname': node[3]}}
+        msg = {'level': 'app', 'type': 'notifyNewNode', 'node': {'uuid': node[0], 'ip': node[1], 'port': node[2], 'nickname': node[3], 'role': node[4]}}
         msg.update(self.basic())
         return json.dumps(msg)
 
