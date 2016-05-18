@@ -3,13 +3,14 @@ import sys
 
 class Message:
 
-    def __init__(self, uuid, port, nickname):
+    def __init__(self, uuid, port, nickname, role):
         self.__uuid = uuid
         self.__port = port
         self.__nickname = nickname
+        self.__role = role
 
     def basic(self):
-        return {'uuid': self.__uuid, 'port': self.__port, 'nickname': self.__nickname}
+        return {'uuid': self.__uuid, 'port': self.__port, 'nickname': self.__nickname, 'role':self.__role}
 
     def checkAlive(self):
         msg = {'level': 'app', 'type': 'checkAlive'}
