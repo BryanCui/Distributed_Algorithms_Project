@@ -7,6 +7,7 @@ import npyscreen
 from GUI.LoginScreen import LoginScreen
 
 from peer.command import Command
+from peer.notificationCentre import NotificationCentre
 
 class ActionControllerCmd(npyscreen.ActionControllerSimple):
     def create(self):
@@ -20,7 +21,7 @@ class ActionControllerCmd(npyscreen.ActionControllerSimple):
         if commands[0] == "q":
             sys.exit() 
 
-        App.updateInfo(App.c)
+        App.updateInfo()
 
         if commands[0] != "r":
             self.parent.wMain.values.append(App.command.execute(commands[0], commands[1:]))
@@ -61,8 +62,10 @@ class App(npyscreen.NPSApp):
         #main screen
         self.c = CommandActive()
         self.c.wStatus1.value = "[" + self.nickname + " as " + self.role + "]"
-        self.updateInfo(self.c)
+        self.updateInfo()
         self.c.edit()
+
+        NotificationCentre.defaultCentre().addObserver('event', self, updateInfo)
 
         self.command.execute('logout')
 
@@ -90,7 +93,7 @@ class App(npyscreen.NPSApp):
         return True
 
     #refresh the people around you
-    def updateInfo(self, c):
+    def updateInfo(self):
         info = []
 
         # people around
@@ -116,8 +119,8 @@ class App(npyscreen.NPSApp):
                     info.append(key + ' ' + str(resourceDict[key]['stock']) + " in inventory")
 
         info.append("------------------------------")
-        c.wMain.values = info
-        c.wMain.display()
+        self.c.wMain.values = info
+        self.c.wMain.display()
         
 
 if __name__ == "__main__":
