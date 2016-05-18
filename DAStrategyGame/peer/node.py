@@ -3,6 +3,7 @@
 import socket, thread, time, logging
 import message, snapshot
 import sys
+from notificationCentre import NotificationCentre
 sys.path.append("../")
 
 from User.User import User
@@ -295,4 +296,4 @@ def main(argv):
 
 
 if __name__ == '__main__':
-    main(sys.argv)
+        main(sys.argv)

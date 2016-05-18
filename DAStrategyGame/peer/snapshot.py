@@ -1,5 +1,7 @@
 # coding=UTF-8
 import logging
+from notificationCentre import NotificationCentre
+
 logging.getLogger().setLevel(logging.INFO)
 
 # We assume there is only one snapshot taking place at any time.
@@ -46,7 +48,7 @@ class NodeSnapshot(object):
             if value['done'] == False:
                 return
         self._isDone = True
-        # TODO: trigger notification
+        NotificationCentre.defaultCentre().fire('SnapshotDidFinish', {'snapshot': self})
 
     def recordMessage(self, n, msg):
         self.channelStates[n[0]]['msg'].append(msg)
