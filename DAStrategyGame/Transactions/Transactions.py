@@ -26,13 +26,13 @@ class Transactions(Singleton):
 
     def start_transaction(self, resource, quantity):
         self.set_user_status(self.__user)
-        self.set_trading_status(self.__user.get_trading_center())
+        self.set_trading_status(self.__user.trading_center)
         self.__node.send_message(self.__host, self.__MSG.startTransaction(resource, quantity))
         self.transaction_thread()
 
     def confirm_start_transaction(self, socket, resource, quantity):
         self.set_user_status(self.__user)
-        self.set_trading_status(self.__user.get_trading_center())
+        self.set_trading_status(self.__user.trading_center)
         socket.send(self.__MSG.confirmStartTransaction(resource, quantity))
         self.transaction_thread()
 
@@ -54,9 +54,9 @@ class Transactions(Singleton):
         self.__node.send_message(addr, self.__MSG.buyResource(resource, quantity))
 
     def sell_resource(self, socket, resource, quantity, price):
-        self.__user.get_trading_center().consume_resources(resource, quantity)
+        self.__user.trading_center.consume_resources(resource, quantity)
         self.__user.add_money(int(price) * quantity)
-        socket.send(self.__MSG.sellResource(resource, quantity, self.__user.get_trading_center().get_resources_price(resource)))
+        socket.send(self.__MSG.sellResource(resource, quantity, self.__user.trading_center.get_resources_price(resource)))
 
     def set_user_status(self, user):
         self.__food = user.get_food()
@@ -75,7 +75,7 @@ class Transactions(Singleton):
         self.__user.set_resources(self.__food, self.__wood, self.__mineral, self.__leather, self.__money)
 
     def recover_transaction_status_sell(self):
-        self.__user.get_trading_center().set_resources(self.__trading_food, self.__trading_wood, self.__trading_mineral, self.__trading_leather)
+        self.__user.trading_center.set_resources(self.__trading_food, self.__trading_wood, self.__trading_mineral, self.__trading_leather)
 
     def set_finished(self, finished):
         self.__is_finished = finished

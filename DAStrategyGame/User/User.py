@@ -14,6 +14,10 @@ class User(Singleton):
         self.__money = 10000
         self.__trading_center = TradingCenter()
 
+    @property
+    def trading_center(self):
+        return self.__trading_center
+
     def set_resources(self, food, wood, mineral, leather, money):
         self.__food = food
         self.__wood = wood
@@ -98,8 +102,7 @@ class User(Singleton):
         print 'Leather: %d' % self.__leather
         print 'Money: %d' % self.__money
 
-    def get_trading_center(self):
-        return self.__trading_center
+
 
 
     def put_resource_into_trading_center(self, resource, quantity, price):
@@ -109,3 +112,20 @@ class User(Singleton):
     def get_resource_from_trading_center_back(self, resource, quantity):
         self.__trading_center.consume_resources(resource, quantity)
         self.add_resources(resource, quantity)
+
+    def get_user_resource_status(self):
+        return {
+            'food': self.__food,
+            'wood': self.__wood,
+            'mineral': self.__mineral,
+            'leather': self.__leather,
+            'money': self.__money
+        }
+
+    def get_trading_center_status(self):
+        return {
+            'food': (self.trading_center.get_food(), self.trading_center.get_food_price()),
+            'wood': (self.trading_center.get_wood(), self.trading_center.get_wood_price()),
+            'mineral': (self.trading_center.get_mineral(), self.trading_center.get_mineral_price()),
+            'leather': (self.trading_center.get_leather(), self.trading_center.get_leather_price())
+        }
