@@ -80,7 +80,6 @@ class Command(object):
         return self.node.startSnapshot()
 
     def checkAlive(self):
-        logging.info('fuck')
         return self.node.checkAlive()
 
     def logout(self):
