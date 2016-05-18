@@ -110,6 +110,9 @@ class App(npyscreen.NPSApp):
 
     #refresh the people around you
     def updateInfo(self, arg = None):
+
+        self.command.execute('checkAlive')
+
         info = []
 
         # people around
