@@ -12,6 +12,7 @@ from Transactions.Transactions import Transactions
 logging.getLogger().setLevel(logging.INFO)
 
 router = {
+    ('app', 'notifyNewNode'): 'onNotifyNewNode',
     ('app', 'requireNodeList'): 'onRequireNodeList',
     ('app', 'provideNodeList'): 'onProvideNodeList',
     ('app', 'logout'): 'onLogout',
@@ -79,8 +80,9 @@ class Node(object):
             client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             client.connect(addr)
             client.send(msg)
+            logging.info('sending (%s:%d) msg: %s' % (addr[0], addr[1], msg))
             response = client.recv(1024 * 1024)
-            logging.info(response)
+            logging.info('received %s' % response)
             msg = self.msg.parse(response)
             self.handle_message(client, addr, msg)
             client.close()
@@ -94,6 +96,7 @@ class Node(object):
             client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             client.connect(addr)
             client.send(msg)
+            logging.info('sending (%s:%d) msg: %s' % (addr[0], addr[1], msg))
             return True
         except:
             return False
@@ -111,10 +114,13 @@ class Node(object):
         msg_level = msg['level']
         msg_type = msg['type']
 
-        logging.info('receive msg: %s' % msg)
-
         # check if this message is from an unknown node, add it to nodeList
         if not self.hasNode(msg['uuid']) and self._uuid != msg['uuid']:
+            # notify the other node in my list
+            logging.info('fuck %s' % self.nodeList)
+            for n in self.nodeList:
+                self.oneway_message((n[1], n[2]), self.msg.notifyNewNode(node))
+
             self.nodeList.append(node)
             logging.info('add node (%d,%s,%d,%s)' % node)
 
@@ -129,6 +135,11 @@ class Node(object):
             apply(func, (self, socket, addr, node, msg))
 
     # begin handlers
+    def onNotifyNewNode(self, socket, addr, node, msg):
+        node = (msg['node']['uuid'], msg['node']['ip'], msg['node']['port'], msg['node']['nickname'])
+        self.nodeList.append(node)
+        logging.info('add node (%d,%s,%d,%s)' % node)
+
     def onRequireNodeList(self, socket, addr, node, msg):
         # reply with local node list
         socket.send(self.msg.provideNodeList(self.nodeList))
@@ -205,7 +216,7 @@ class Node(object):
             self.lastLocalSnapshot.finishRecord(node)
             # send marker to all known node
             for n in self.nodeList:
-                self.oneway_message((node[1], node[2]), self.msg.snapshotMarker())
+                self.oneway_message((n[1], n[2]), self.msg.snapshotMarker())
         else:
             # continue current snapshot
             self.lastLocalSnapshot.finishRecord(node)

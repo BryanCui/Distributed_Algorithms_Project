@@ -74,6 +74,7 @@ class Command(object):
         return self.node.logout()
 
     def test(self, info):
+        logging.info('finished!!!!!!!!')
         logging.info(info['snapshot'].localState)
         logging.info(info['snapshot'].channelStates)
 
@@ -96,6 +97,8 @@ def main(argv):
 
     while True:
         line = sys.stdin.readline()
+        if len(line) < 2:
+            continue
         ws = line.split()
         result = None
         if ws[0] == 'connect':
