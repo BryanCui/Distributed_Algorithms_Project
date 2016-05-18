@@ -89,8 +89,8 @@
       <file leaf-file-name="command.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/peer/command.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1845">
-              <caret line="123" column="45" selection-start-line="123" selection-start-column="45" selection-end-line="123" selection-end-column="45" />
+            <state relative-caret-position="-15">
+              <caret line="125" column="48" selection-start-line="125" selection-start-column="48" selection-end-line="125" selection-end-column="48" />
               <folding>
                 <element signature="e#16#35#0" expanded="true" />
               </folding>
@@ -889,8 +889,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/peer/command.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1845">
-          <caret line="123" column="45" selection-start-line="123" selection-start-column="45" selection-end-line="123" selection-end-column="45" />
+        <state relative-caret-position="-15">
+          <caret line="125" column="48" selection-start-line="125" selection-start-column="48" selection-end-line="125" selection-end-column="48" />
           <folding>
             <element signature="e#16#35#0" expanded="true" />
           </folding>

@@ -59,8 +59,8 @@ class Command(object):
             return False
         return True
 
-    def inquireNodeList(self, addr):
-        response = self.node.send_message(addr, self.node.msg.requireNodeList())
+    def inquireNodeList(self, ip, port):
+        response = self.node.send_message((ip, port), self.node.msg.requireNodeList())
         return False
 
     def localNodeList(self):
@@ -72,8 +72,8 @@ class Command(object):
     def tradingCenter(self):
         return self.node.user.get_trading_center_status()
 
-    def remoteNodeResource(self, addr):
-        response = self.node.send_message(addr, self.node.msg.showTradingCenter())
+    def remoteNodeResource(self, ip, port):
+        response = self.node.send_message((ip, port), self.node.msg.showTradingCenter())
         return response['tradingList']
 
     def startSnapshot(self):
@@ -93,11 +93,11 @@ class Command(object):
     def toStock(self, resource, num):
         return self.node.user.get_resource_from_trading_center_back(resource, int(num))
 
-    def buy(self, addr, resource, num):
-        return self.node.start_transaction(addr, resource, int(num))
+    def buy(self, ip, port, resource, num):
+        return self.node.start_transaction((ip, port), resource, int(num))
 
-    def activate(self, addr, cdkey):
-        return self.node.send_message(addr, self.node.msg.activateCdkey(cdkey))
+    def activate(self, ip, port, cdkey):
+        return self.node.send_message((ip, port), self.node.msg.activateCdkey(cdkey))
 
     # login nickname role address(ip:port)
     # 
@@ -121,7 +121,7 @@ def main(argv):
         result = None
         logging.info(ws[0])
         if ws[0] == 'connect':
-            result = command.execute('connect', (ws[1], int(ws[2])))
+            result = command.execute('connect', ws[1], int(ws[2]))
         elif ws[0] == 'nodelist':
             result = command.execute('nodeList')
         elif ws[0] == 'logout':
@@ -129,15 +129,15 @@ def main(argv):
         elif ws[0] == 'show':
             result = command.execute('show')
         elif ws[0] == 'buy':
-            result = command.execute('buy', (ws[1], int(ws[2])), ws[3], int(ws[4]))
+            result = command.execute('buy', ws[1], int(ws[2]), ws[3], int(ws[4]))
         elif ws[0] == 'stock':
             result = command.execute('stock', ws[1], int(ws[2]))
         elif ws[0] == 'trade':
             result = command.execute('trade', ws[1], int(ws[2]), int(ws[3]))
         elif ws[0] == 'remote':
-            result = command.execute('remote', (ws[1], int(ws[2])))
+            result = command.execute('remote', ws[1], int(ws[2]))
         elif ws[0] == 'activate':
-            result = command.execute('activate', (ws[1], int(ws[2])), ws[3])
+            result = command.execute('activate', ws[1], int(ws[2]), ws[3])
         elif ws[0] == 'tradingCenter':
             result = command.execute('tradingCenter')
         # elif ws[0] == 'resource':
