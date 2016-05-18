@@ -43,7 +43,10 @@ class Command(object):
                 return False
         cls = self.__class__
         func = cls.__dict__[fName]
-        return apply(func, (self,)+args)
+        try:
+            return apply(func, (self,)+args)
+        except:
+            return False
 
     # begin commands
     def createGame(self, nickname, role, port):
