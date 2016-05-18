@@ -91,11 +91,11 @@ class TradingCenter(Singleton):
         if resource == 'food':
             self.__food[0] -= quantity
         elif resource == 'wood':
-            self.__wood -= quantity
+            self.__wood[0] -= quantity
         elif resource == 'mineral':
-            self.__mineral -= quantity
+            self.__mineral[0] -= quantity
         elif resource == 'leather':
-            self.__leather -= quantity
+            self.__leather[0] -= quantity
 
     # def earn_money(self, resource, quantity):
     #     if resource == 'food':

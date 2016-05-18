@@ -1,11 +1,40 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+import sys
 import npyscreen
+
 from GUI.LoginScreen import LoginScreen
-from GUI.MainScreen import MainScreen
 
 from peer.command import Command
+from peer.notificationCentre import NotificationCentre
+
+class ActionControllerCmd(npyscreen.ActionControllerSimple):
+    def create(self):
+        self.add_action('^.*', self.handle, False)
+
+    def handle(self, command_line, widget_proxy, live):
+        commands = command_line.split()
+
+        commands[0] = commands[0][1:]
+
+        if commands[0] == "q":
+            sys.exit() 
+
+        result = ""
+        if commands[0] != "r":
+            if len(commands) >= 2: 
+                result = App.command.execute(commands[0], *commands[1:])
+            else:
+                result = App.command.execute(commands[0])
+
+        App.updateInfo()
+        self.parent.wMain.values.append(result)
+
+        self.parent.wMain.display()
+
+class CommandActive(npyscreen.FormMuttActiveTraditional):
+    ACTION_CONTROLLER = ActionControllerCmd
 
 class App(npyscreen.NPSApp):
 
@@ -36,9 +65,13 @@ class App(npyscreen.NPSApp):
             else:
                 break
 
-        # launch main screen
-        mainScreen = MainScreen("[" + self.nickname + " as " + self.role + "]", self.command)
-        mainScreen.edit();
+        #main screen
+        self.c = CommandActive()
+        self.c.wStatus1.value = "[" + self.nickname + " as " + self.role + "]"
+        self.updateInfo()
+        self.c.edit()
+
+        NotificationCentre.defaultCentre().addObserver('event', self, updateInfo)
 
         self.command.execute('logout')
 
@@ -64,6 +97,37 @@ class App(npyscreen.NPSApp):
             , self.role
             , int(self.address.split(":")[1]))
         return True
+
+    #refresh the people around you
+    def updateInfo(self):
+        info = []
+
+        # people around
+        count = 0
+        for people in self.command.execute('localNodeList'):
+            info.append(people[3] + " the " + people[4])
+            count += 1
+
+        info.append("There are " + str(count) + " people around you.")
+        info.append("------------------------------")
+
+        # local resource
+        resourceDict = self.command.execute('localResource')
+        info.append("money: " + str(resourceDict['money']['stock']))
+
+        for key in resourceDict.keys():
+            if key == 'money':
+                continue
+            else:
+                if resourceDict[key]["for trade"]:
+                    info.append(key + ' ' + str(resourceDict[key]['stock']) + " for trade at price " + str(resourceDict[key]['price']))
+                else:
+                    info.append(key + ' ' + str(resourceDict[key]['stock']) + " in inventory")
+
+        info.append("------------------------------")
+        self.c.wMain.values = info
+        self.c.wMain.display()
+        
 
 if __name__ == "__main__":
     App = App()
