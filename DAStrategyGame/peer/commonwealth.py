@@ -82,23 +82,23 @@ def main(argv):
         if ws[0] == "create" and len(ws)==3:
             node.mylock.acquire()
             if node.is_num(ws[2]):
-                logging.info("balance should be num")
+                print("balance should be num")
             else:
-                logging.info("%s" % node.bank.create_balance(ws[1], ws[2]))
+                print("%s" % node.bank.create_balance(ws[1], ws[2]))
             node.mylock.release()
 
         # delete cdkey
         elif ws[0] == "delete" and len(ws)==2:
             node.mylock.acquire()
-            logging.info("%s"%node.bank.delete_balance(ws[1]))
+            print("%s"%node.bank.delete_balance(ws[1]))
             node.mylock.release()
 
         # get cdkey list
         elif ws[0] == "list" and len(ws)==1:
-            logging.info("we have the available list as: %s" % node.bank.cdkey_list)
+            print("we have the available list as: %s" % node.bank.cdkey_list)
 
         elif ws[0] == 'nodelist':
-            logging.info('current local node list: %s' % node.nodeList)
+            print('current local node list: %s' % node.nodeList)
 
         # send msg
         elif ws[0] == "activate" and len(ws)==4:
@@ -107,7 +107,7 @@ def main(argv):
         # send msg
         elif ws[0] == "import" and len(ws) == 2:
             node.mylock.acquire()
-            logging.info("%s"%node.bank.insertCdkeys(ws[1]))
+            print("%s"%node.bank.insertCdkeys(ws[1]))
             node.mylock.release()
         # other commands are wrong
         else:
