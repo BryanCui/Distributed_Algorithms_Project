@@ -2,7 +2,7 @@
 
 from User.Resource import *
 from Singleton import Singleton
-import threading
+import thread
 from time import sleep
 
 
@@ -84,8 +84,8 @@ class Transactions(Singleton):
         return self.__is_finished
 
     def transaction_thread(self):
-        transaction_thread = threading.Thread(target=self.transaction_success_fail)
-        transaction_thread.start()
+        thread.start_new_thread(self.transaction_success_fail)
+
 
     def transaction_success_fail(self):
         sleep(6)
