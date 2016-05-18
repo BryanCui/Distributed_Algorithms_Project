@@ -9,8 +9,6 @@ sys.path.append("../")
 from User.User import User
 from Transactions.Transactions import Transactions
 
-logging.getLogger().setLevel(logging.ERROR)
-
 router = {
     ('app', 'notifyNewNode'): 'onNotifyNewNode',
     ('app', 'notifyDeleteNode'): 'onNotifyDeleteNode',

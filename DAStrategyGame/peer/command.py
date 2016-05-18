@@ -3,7 +3,7 @@
 import sys, logging
 from notificationCentre import NotificationCentre
 from node import Node
-logging.getLogger().setLevel(logging.ERROR)
+# logging.getLogger().setLevel(logging.INFO)
 
 route = {
     'createGame': 'createGame',

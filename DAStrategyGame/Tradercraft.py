@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-import sys
+import sys, logging
 import npyscreen
 
 from GUI.LoginScreen import LoginScreen
 
 from peer.command import Command
 from peer.notificationCentre import NotificationCentre
+
+logging.basicConfig(filename='log.log',level=logging.DEBUG)
 
 class ActionControllerCmd(npyscreen.ActionControllerSimple):
     def create(self):
