@@ -31,8 +31,17 @@ class ActionControllerCmd(npyscreen.ActionControllerSimple):
                 result = App.command.execute(commands[0])
 
         App.updateInfo()
-        self.parent.wMain.values.append(result)
 
+        if type(result) is dict:
+            if "type" in result and result['type'] == "returnActivate":
+                result = result['info']
+            if "food" in result:
+                for item in result:
+                    self.parent.wMain.values.append(item + ": " + str(result[item][0]) + " for trade, at price of " + str(result[item][1]))
+                result = ""
+
+
+        self.parent.wMain.values.append(result)
         self.parent.wMain.display()
 
 class CommandActive(npyscreen.FormMuttActiveTraditional):
