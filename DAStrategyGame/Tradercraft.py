@@ -115,7 +115,7 @@ class App(npyscreen.NPSApp):
         # people around
         count = 0
         for people in self.command.execute('nodeList'):
-            info.append(people[3] + " the " + people[4] + " @ " + people[1] + ":" + people[2])
+            info.append(people[3] + " the " + people[4] + " @ " + str(people[1]) + ":" + str(people[2])
             count += 1
 
         info.append("There are " + str(count) + " people around you.")
