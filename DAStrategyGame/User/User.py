@@ -4,6 +4,7 @@
 from TradingCenter import TradingCenter
 from Singleton import Singleton
 from time import sleep
+from peer.notificationCentre import NotificationCentre
 import thread
 
 
@@ -142,6 +143,7 @@ class User(Singleton):
         while True:
             sleep(15)
             self.__food -= 1
+            self.fire_notification()
 
     def role_thread(self, role):
         thread.start_new_thread(self.role_character, ())
@@ -151,15 +153,26 @@ class User(Singleton):
             while True:
                 sleep(10)
                 self.__food += 5
+                self.fire_notification()
         elif self.__role == 'lumberjack':
             while True:
                 sleep(10)
                 self.__wood += 5
+                self.fire_notification()
         elif self.__role == 'miner':
             while True:
                 sleep(10)
                 self.__mineral += 5
+                self.fire_notification()
         elif self.__role == 'fellmonger':
             while True:
                 sleep(10)
                 self.__leather += 5
+                self.fire_notification()
+
+    def fire_notification(self):
+        NotificationCentre.defaultCentre().fire('resource_change', {'food': self.__food,
+                                                                    'wood': self.__wood,
+                                                                    'mineral': self.__mineral,
+                                                                    'leather': self.__leather,
+                                                                    'money': self.__money})
