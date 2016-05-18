@@ -106,7 +106,7 @@ class App(npyscreen.NPSApp):
 
         # people around
         count = 0
-        for people in self.command.execute('localNodeList'):
+        for people in self.command.execute('nodeList'):
             info.append(people[3] + " the " + people[4])
             count += 1
 
@@ -114,7 +114,7 @@ class App(npyscreen.NPSApp):
         info.append("------------------------------")
 
         # local resource
-        resourceDict = self.command.execute('localResource')
+        resourceDict = self.command.execute('show')
         info.append("money: " + str(resourceDict['money']['stock']))
 
         for key in resourceDict.keys():
