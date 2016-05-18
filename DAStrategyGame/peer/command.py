@@ -8,15 +8,15 @@ from node import Node
 route = {
     'createGame': 'createGame',
     'joinGame': 'joinGame',
-    'inquireNodeList': 'inquireNodeList',
-    'localNodeList': 'localNodeList',
-    'localResource': 'localResource',
-    'remoteNodeResource': 'remoteNodeResource',
+    'connect': 'inquireNodeList',
+    'nodeList': 'localNodeList',
+    'show': 'localResource',
+    'remote': 'remoteNodeResource',
     'tradingCenter': 'tradingCenter',
-    'startSnapshot': 'startSnapshot',
+    'snapshot': 'startSnapshot',
     'checkAlive': 'checkAlive',
-    'toTrade': 'toTrade',
-    'toStock': 'toStock',
+    'trade': 'toTrade',
+    'stock': 'toStock',
     'buy': 'buy',
     'activate': 'activate',
     'logout': 'logout'
@@ -121,21 +121,21 @@ def main(argv):
         result = None
         logging.info(ws[0])
         if ws[0] == 'connect':
-            result = command.execute('inquireNodeList', (ws[1], int(ws[2])))
+            result = command.execute('connect', (ws[1], int(ws[2])))
         elif ws[0] == 'nodelist':
-            result = command.execute('localNodeList')
+            result = command.execute('nodeList')
         elif ws[0] == 'logout':
             result = command.execute('logout')
         elif ws[0] == 'show':
-            result = command.execute('localResource')
+            result = command.execute('show')
         elif ws[0] == 'buy':
             result = command.execute('buy', (ws[1], int(ws[2])), ws[3], int(ws[4]))
         elif ws[0] == 'stock':
-            result = command.execute('toStock', ws[1], int(ws[2]))
+            result = command.execute('stock', ws[1], int(ws[2]))
         elif ws[0] == 'trade':
-            result = command.execute('toTrade', ws[1], int(ws[2]), int(ws[3]))
+            result = command.execute('trade', ws[1], int(ws[2]), int(ws[3]))
         elif ws[0] == 'remote':
-            result = command.execute('remoteNodeResource', (ws[1], int(ws[2])))
+            result = command.execute('remote', (ws[1], int(ws[2])))
         elif ws[0] == 'activate':
             result = command.execute('activate', (ws[1], int(ws[2])), ws[3])
         elif ws[0] == 'tradingCenter':
@@ -154,7 +154,7 @@ def main(argv):
         #     node._transaction = Transactions((ws[1], int(ws[2])), node._msg, node, node.user)
         #     node._transaction.start_transaction(ws[3], ws[4])
         elif ws[0] == 'snapshot':
-            result = command.execute('startSnapshot')
+            result = command.execute('snapshot')
         elif ws[0] == 'checkAlive':
             result = command.execute('checkAlive')
         elif ws[0] == 'localResource':
