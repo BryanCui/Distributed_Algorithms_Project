@@ -24,13 +24,14 @@ router = {
     ('app', 'doneTransaction'): 'onDoneTransaction',
     ('app', 'showTradingCenter'): 'onShowTradingCenter',
     ('app', 'returnTradingCenter'): 'onReturnTradingCenter',
+    ('app', 'returnActivate'): 'onReturnActivate',
     ('snapshot', 'marker'): 'onMarker',
     'app': 'onApp',
 }
 
 
 class Node(object):
-    def __init__(self, nickname, role, port):
+    def __init__(self, nickname, port, role):
         self._nickname = nickname
         self._nodeList = []  # [(uuid:int, ip:str, port:int, nickname:str)]
         self._port = port
@@ -39,7 +40,7 @@ class Node(object):
         self._server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._server.bind(('0.0.0.0', port))
         self._server.listen(5)
-        self._user = User()
+        self._user = User(role)
         self._transaction = Transactions('', self._msg, self, self._user)
         self._lastLocalSnapshot = None
         print self._user.show_resources()
@@ -83,7 +84,8 @@ class Node(object):
             self.handle_message(client, addr, msg)
             client.close()
             return msg
-        except:
+        except Exception, e:
+            print e
             return False
 
     def oneway_message(self, addr, msg):
@@ -168,6 +170,15 @@ class Node(object):
     def onSellResource(self, socket, addr, node, msg):
         self._transaction.finish_transaction(addr, msg)
 
+    # Handle the Return of Activate Info
+    def onReturnActivate(self, socket, addr, node, msg):
+        balance = int(msg['balance'])
+        if balance > 0:
+            self.user.add_money(balance)
+            self.user.show_resources()
+        logging.info("%s, withdraw %s "%(msg['info'],msg['balance']))
+
+
     def onFinishTransaction(self, socket, addr, node, msg):
         self._transaction.confirm_finish_transaction(socket)
 
@@ -247,7 +258,7 @@ class Node(object):
     # end of helpers
 
 def main(argv):
-    node = Node(argv[1], 'role', int(argv[2]))
+    node = Node(argv[1], int(argv[2]), argv[3])
     # for debug only
     while True:
         line = sys.stdin.readline()
@@ -268,6 +279,10 @@ def main(argv):
             logging.info(node.user.trading_center.show_trading_center())
         elif ws[0] == 'sell':
             node.user.put_resource_into_trading_center(ws[1], int(ws[2]), int(ws[3]))
+        # activate cdkey argv[3]: ip, port, cdkey
+        elif ws[0] == "activate" and len(ws) == 4:
+            node.send_message((ws[1], int(ws[2])), node.msg.activateCdkey(ws[3]))
+
         elif ws[0] == 'get_resource_back_from_trading_center':
             node.user.get_resource_from_trading_center_back(ws[1], int(ws[2]))
         elif ws[0] == 'get_trading_list':
