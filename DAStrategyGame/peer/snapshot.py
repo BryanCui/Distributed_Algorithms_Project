@@ -46,6 +46,7 @@ class NodeSnapshot(object):
             if value['done'] == False:
                 return
         self._isDone = True
+        # TODO: trigger notification
 
     def recordMessage(self, n, msg):
         self.channelStates[n[0]]['msg'].append(msg)
