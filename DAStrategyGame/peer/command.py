@@ -1,6 +1,8 @@
 # coding=UTF-8
 
+import sys, logging
 from node import Node
+logging.getLogger().setLevel(logging.INFO)
 
 route = {
     'createGame': 'createGame',
@@ -8,7 +10,9 @@ route = {
     'inquireNodeList': 'inquireNodeList',
     'localNodeList': 'localNodeList',
     'localResource': 'localResource',
-    'remoteNodeResource': 'remoteNodeResource', # lao cui!
+    'remoteNodeResource': 'remoteNodeResource',
+    'startSnapshot': 'startSnapshot',
+    'logout': 'logout'
 }
 
 class Command(object):
@@ -19,9 +23,8 @@ class Command(object):
     @property
     def node(self):
         return self._node
-    
 
-    def excute(self, cmd, *args=()):
+    def execute(self, cmd, *args):
         if cmd not in route:
             return False
         fName = route[cmd]
@@ -37,13 +40,13 @@ class Command(object):
 
     # begin commands
     def createGame(self, nickname, role, port):
-        node = Node(nickname, role, port)
-        self.node = node
+        node = Node(nickname, role, int(port))
+        self._node = node
         return True
 
-    def joinGame(self, nickname, role, addr):
-        node = Node(nickname, role, port)
-        self.node = node
+    def joinGame(self, nickname, role, port, addr):
+        node = Node(nickname, role, int(port))
+        self._node = node
         response = node.send_message(addr, node.msg.requireNodeList())
         if response == False:
             return False
@@ -57,14 +60,67 @@ class Command(object):
         return self.node.nodeList
 
     def localResource(self):
-        return self.node.user.resources()    
+        return self.node.localState()    
 
     def remoteNodeResource(self, addr):
         response = self.node.send_message(addr, self.node.msg.showTradingCenter())
         return response['tradingList']
+
+    def startSnapshot(self):
+        return self.node.startSnapshot()
+
+    def logout(self):
+        return self.node.logout()
+
 
 
     # login nickname role address(ip:port)
     # 
 
     # end of commands
+
+def main(argv):
+    command = Command()
+    if len(argv) == 4:
+        command.execute('createGame', argv[1], argv[2], int(argv[3]))
+    elif len(argv) == 6:
+        command.execute('joinGame', argv[1], argv[2], int(argv[3]), (argv[4], int(argv[5])))
+    else:
+        return
+
+    while True:
+        line = sys.stdin.readline()
+        ws = line.split()
+        result = None
+        if ws[0] == 'connect':
+            result = command.execute('inquireNodeList', (ws[1], int(ws[2])))
+        elif ws[0] == 'nodelist':
+            result = command.execute('localNodeList')
+        elif ws[0] == 'logout':
+            result = command.execute('logout')
+        elif ws[0] == 'show':
+            result = command.execute('localResource')
+        # elif ws[0] == 'resource':
+        #     logging.info(node.user.show_resources())
+        # elif ws[0] == 'trading_center':
+        #     logging.info(node.user.get_trading_center().show_trading_center())
+        # elif ws[0] == 'sell':
+        #     node.user.put_resource_into_trading_center(ws[1], int(ws[2]), int(ws[3]))
+        # elif ws[0] == 'get_resource_back_from_trading_center':
+        #     node.user.get_resource_from_trading_center_back(ws[1], int(ws[2]))
+        # elif ws[0] == 'get_trading_list':
+        #     node.send_message((ws[1], int(ws[2])), node.msg.showTradingCenter())
+        # elif ws[0] == 'buy':
+        #     node._transaction = Transactions((ws[1], int(ws[2])), node._msg, node, node.user)
+        #     node._transaction.start_transaction(ws[3], ws[4])
+        elif ws[0] == 'snapshot':
+            result = command.execute('startSnapshot')
+        
+        logging.info(result)
+
+
+
+if __name__ == '__main__':
+    # [command.py txx role port]
+    # [command.py txx role port remoteIP remotePort]
+    main(sys.argv)
