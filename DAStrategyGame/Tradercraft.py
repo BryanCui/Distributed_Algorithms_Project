@@ -133,7 +133,7 @@ class App(npyscreen.NPSApp):
                 continue
             else:
                 if resourceDict[key]["for trade"] == 0:
-                    info.append(key + ': ' + str(resourceDict[key]['stock']) + " instock")
+                    info.append(key + ': ' + str(resourceDict[key]['stock']) + " in stock")
                 else:
                     info.append(key + ': ' + str(resourceDict[key]['for trade']) + " for trade at price " + str(resourceDict[key]['price']) + ", and " + str(resourceDict[key]['stock']) + " in stock.")
 
