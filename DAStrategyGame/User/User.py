@@ -4,7 +4,7 @@
 from TradingCenter import TradingCenter
 from Singleton import Singleton
 from time import sleep
-import threading
+import thread
 
 
 class User(Singleton):
@@ -136,8 +136,7 @@ class User(Singleton):
         }
 
     def food_consuming_thread(self):
-        food_consuming_thread = threading.Thread(target=self.food_consuming)
-        food_consuming_thread.start()
+        thread.start_new_thread(self.food_consuming, ())
 
     def food_consuming(self):
         while True:
@@ -145,8 +144,7 @@ class User(Singleton):
             self.__food -= 1
 
     def role_thread(self, role):
-        role_act_thread = threading.Thread(target=self.role_character)
-        role_act_thread.start()
+        thread.start_new_thread(self.role_character, ())
 
     def role_character(self):
         if self.__role == 'farmer':
