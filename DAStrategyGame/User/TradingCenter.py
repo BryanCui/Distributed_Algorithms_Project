@@ -91,16 +91,16 @@ class TradingCenter(Singleton):
         elif resource == 'leather':
             self.__leather -= quantity
 
-    def earn_money(self, resource, quantity):
-        if resource == 'food':
-            money = quantity * self.get_food_price()
-        elif resource == 'wood':
-            money = quantity * self.get_wood_price()
-        elif resource == 'mineral':
-            money = quantity * self.get_mineral_price()
-        elif resource == 'leather':
-            money = quantity * self.get_leather_price()
-        return money
+    # def earn_money(self, resource, quantity):
+    #     if resource == 'food':
+    #         money = quantity * self.get_food_price()
+    #     elif resource == 'wood':
+    #         money = quantity * self.get_wood_price()
+    #     elif resource == 'mineral':
+    #         money = quantity * self.get_mineral_price()
+    #     elif resource == 'leather':
+    #         money = quantity * self.get_leather_price()
+    #     return money
 
     def get_trading_list(self):
         return {'food':(self.__food[0], self.__food[1]),

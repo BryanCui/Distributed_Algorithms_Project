@@ -14,7 +14,7 @@
   </component>
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/DAStrategyGame$node.coverage" NAME="node Coverage Results" MODIFIED="1463562002143" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/peer" />
+    <SUITE FILE_PATH="coverage/DAStrategyGame$node.coverage" NAME="node Coverage Results" MODIFIED="1463570501787" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/peer" />
     <SUITE FILE_PATH="coverage/DAStrategyGame$GUI.coverage" NAME="GUI Coverage Results" MODIFIED="1463396438148" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GUI" />
   </component>
   <component name="CreatePatchCommitExecutor">
@@ -62,11 +62,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TradingCenter.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="TradingCenter.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/User/TradingCenter.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="81" column="87" selection-start-line="81" selection-start-column="87" selection-end-line="81" selection-end-column="87" />
+            <state relative-caret-position="370">
+              <caret line="93" column="0" selection-start-line="93" selection-start-column="0" selection-end-line="102" selection-end-column="22" />
               <folding>
                 <element signature="e#17#48#0" expanded="true" />
               </folding>
@@ -77,7 +77,7 @@
       <file leaf-file-name="node.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/peer/node.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="283">
+            <state relative-caret-position="2023">
               <caret line="322" column="61" selection-start-line="322" selection-start-column="61" selection-end-line="322" selection-end-column="61" />
               <folding>
                 <element signature="e#16#52#0" expanded="true" />
@@ -98,11 +98,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Transactions.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Transactions.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Transactions/Transactions.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="493">
-              <caret line="103" column="164" selection-start-line="103" selection-start-column="164" selection-end-line="103" selection-end-column="164" />
+            <state relative-caret-position="253">
+              <caret line="87" column="64" selection-start-line="87" selection-start-column="64" selection-end-line="87" selection-end-column="64" />
               <folding>
                 <element signature="e#16#43#0" expanded="true" />
               </folding>
@@ -131,10 +131,10 @@
         <option value="$PROJECT_DIR$/Singleton.py" />
         <option value="$PROJECT_DIR$/peer/message.py" />
         <option value="$PROJECT_DIR$/peer/snapshot.py" />
-        <option value="$PROJECT_DIR$/Transactions/Transactions.py" />
         <option value="$PROJECT_DIR$/peer/node.py" />
         <option value="$PROJECT_DIR$/User/User.py" />
         <option value="$PROJECT_DIR$/User/TradingCenter.py" />
+        <option value="$PROJECT_DIR$/Transactions/Transactions.py" />
       </list>
     </option>
   </component>
@@ -265,7 +265,7 @@
       <module name="DAStrategyGame" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/peer/node.py" />
-      <option name="PARAMETERS" value="0.0.0.0 8881 lumberjack" />
+      <option name="PARAMETERS" value="0.0.0.0 8887 lumberjack" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <method />
     </configuration>
@@ -513,7 +513,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="820" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2639485" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32967034" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -787,32 +787,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Transactions/Transactions.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="493">
-          <caret line="103" column="164" selection-start-line="103" selection-start-column="164" selection-end-line="103" selection-end-column="164" />
-          <folding>
-            <element signature="e#16#43#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/peer/command.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="385">
           <caret line="66" column="37" selection-start-line="66" selection-start-column="33" selection-end-line="66" selection-end-column="37" />
           <folding>
             <element signature="e#16#35#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/peer/node.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="283">
-          <caret line="322" column="61" selection-start-line="322" selection-start-column="61" selection-end-line="322" selection-end-column="61" />
-          <folding>
-            <element signature="e#16#52#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -837,12 +817,32 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/peer/node.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2023">
+          <caret line="322" column="61" selection-start-line="322" selection-start-column="61" selection-end-line="322" selection-end-column="61" />
+          <folding>
+            <element signature="e#16#52#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/User/TradingCenter.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="81" column="87" selection-start-line="81" selection-start-column="87" selection-end-line="81" selection-end-column="87" />
+        <state relative-caret-position="370">
+          <caret line="93" column="0" selection-start-line="93" selection-start-column="0" selection-end-line="102" selection-end-column="22" />
           <folding>
             <element signature="e#17#48#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Transactions/Transactions.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="253">
+          <caret line="87" column="64" selection-start-line="87" selection-start-column="64" selection-end-line="87" selection-end-column="64" />
+          <folding>
+            <element signature="e#16#43#0" expanded="true" />
           </folding>
         </state>
       </provider>

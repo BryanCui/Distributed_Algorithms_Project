@@ -85,7 +85,7 @@ class Transactions(Singleton):
         return self.__is_finished
 
     def transaction_thread(self):
-        thread.start_new_thread(self.transaction_success_fail)
+        thread.start_new_thread(self.transaction_success_fail,())
 
 
     def transaction_success_fail(self):
