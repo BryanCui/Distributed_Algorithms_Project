@@ -30,7 +30,7 @@ router = {
 
 
 class Node(object):
-    def __init__(self, nickname, role, port):
+    def __init__(self, nickname, port, role):
         self._nickname = nickname
         self._nodeList = []  # [(uuid:int, ip:str, port:int, nickname:str)]
         self._port = port
@@ -39,7 +39,7 @@ class Node(object):
         self._server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._server.bind(('0.0.0.0', port))
         self._server.listen(5)
-        self._user = User()
+        self._user = User(role)
         self._transaction = Transactions('', self._msg, self, self._user)
         self._lastLocalSnapshot = None
         print self._user.show_resources()
@@ -247,7 +247,7 @@ class Node(object):
     # end of helpers
 
 def main(argv):
-    node = Node(argv[1], 'role', int(argv[2]))
+    node = Node(argv[1], int(argv[2]), argv[3])
     # for debug only
     while True:
         line = sys.stdin.readline()
