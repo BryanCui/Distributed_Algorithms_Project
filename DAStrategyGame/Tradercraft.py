@@ -40,6 +40,8 @@ class App(npyscreen.NPSApp):
         mainScreen = MainScreen("[" + self.nickname + " as " + self.role + "]", self.command)
         mainScreen.edit();
 
+        self.command.execute('logout')
+
     # setup the node
     def setup(self):
         if self.address.split(":")[0] == "0.0.0.0":

@@ -2,7 +2,7 @@
 # encoding: utf-8
 
 import npyscreen
-from PeopleList import PeopleList
+from Component import *
 
 from peer.command import Command
 
@@ -30,10 +30,9 @@ class MainScreen(npyscreen.Form):
             , max_height=5
             , scroll_exit=True)
 
-        self.refreshBtn = self.add_widget(npyscreen.Button
+        self.refreshBtn = self.add_widget(RefreshBtn
             , relx=49
             , rely=9
-            , when_pressed_function=self.lookaround
             , name="Look around")
 
         self.command = command
@@ -41,8 +40,6 @@ class MainScreen(npyscreen.Form):
 
     #refresh the people around you
     def lookaround(self):
-        popup = npyscreen.Popup(name="I am clicked")
-        popup.edit()
         list = []
         for people in self.command.execute('localNodeList'):
             list.append(people[3])

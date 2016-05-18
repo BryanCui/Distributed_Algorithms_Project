@@ -37,13 +37,10 @@ class LoginScreen(npyscreen.ActionForm):
             , value = [0,]
             , name="Pick your role"
             , values = [
-                "Farmer"
-                ,"Miner"
-                ,"Hunter"
-                ,"Handicraftsman"
-                ,"Tailor"
-                ,"Blacksmith"
-                ,"Timberjack"
+                "farmer"
+                ,"lumberjack"
+                ,"miner"
+                ,"fellmonger"
             ]
             , scroll_exit=True)
 
