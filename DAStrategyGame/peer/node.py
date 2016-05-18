@@ -238,13 +238,10 @@ class Node(object):
                 self.lastLocalSnapshot.recordMessage(node, msg)
 
     def localState(self):
-        return {
-            'food': self.user.get_food(), 
-            'wood': self.user.get_wood(), 
-            'mineral': self.user.get_mineral(),
-            'leather': self.user.get_leather(),
-            'money': self.user.get_money()
-        }
+        off = self.user.get_user_resource_status()
+        on = self.user.get_trading_center_status()
+        result = {k:{'for trade': on.get(k, (0,0))[0], 'price': on.get(k, (0,0))[1], 'stock': off[k]} for k in off.keys()}
+        return result
 
     # end of handlers
 

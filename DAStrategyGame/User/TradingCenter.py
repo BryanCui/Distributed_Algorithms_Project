@@ -76,10 +76,10 @@ class TradingCenter(Singleton):
         self.__leather[0] = leather
 
     def show_trading_center(self):
-        print "Food: %d  Price: %d" % (self.__food[0], self.__food[1])
-        print "Wood: %d  Price: %d" % (self.__wood[0], self.__wood[1])
-        print "Mineral: %d  Price: %d" % (self.__mineral[0], self.__mineral[1])
-        print "Leather: %d  Price: %d" % (self.__leather[0], self.__leather[1])
+        logging.info("Food: %d  Price: %d" % (self.__food[0], self.__food[1]))
+        logging.info("Wood: %d  Price: %d" % (self.__wood[0], self.__wood[1]))
+        logging.info("Mineral: %d  Price: %d" % (self.__mineral[0], self.__mineral[1]))
+        logging.info("Leather: %d  Price: %d" % (self.__leather[0], self.__leather[1]))
 
     def consume_resources(self, resource, quantity):
         if resource == 'food':
@@ -91,16 +91,16 @@ class TradingCenter(Singleton):
         elif resource == 'leather':
             self.__leather -= quantity
 
-    def earn_money(self, resource, quantity):
-        if resource == 'food':
-            money = quantity * self.get_food_price()
-        elif resource == 'wood':
-            money = quantity * self.get_wood_price()
-        elif resource == 'mineral':
-            money = quantity * self.get_mineral_price()
-        elif resource == 'leather':
-            money = quantity * self.get_leather_price()
-        return money
+    # def earn_money(self, resource, quantity):
+    #     if resource == 'food':
+    #         money = quantity * self.get_food_price()
+    #     elif resource == 'wood':
+    #         money = quantity * self.get_wood_price()
+    #     elif resource == 'mineral':
+    #         money = quantity * self.get_mineral_price()
+    #     elif resource == 'leather':
+    #         money = quantity * self.get_leather_price()
+    #     return money
 
     def get_trading_list(self):
         return {'food':(self.__food[0], self.__food[1]),
