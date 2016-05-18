@@ -115,11 +115,11 @@ class User(Singleton):
             return
 
     def show_resources(self):
-        print 'Food: %d' % self.__food
-        print 'Wood: %d' % self.__wood
-        print 'Mineral: %d' % self.__mineral
-        print 'Leather: %d' % self.__leather
-        print 'Money: %d' % self.__money
+        logging.info('Food: %d' % self.__food)
+        logging.info('Wood: %d' % self.__wood)
+        logging.info('Mineral: %d' % self.__mineral)
+        logging.info('Leather: %d' % self.__leather)
+        logging.info('Money: %d' % self.__money)
 
     def put_resource_into_trading_center(self, resource, quantity, price):
         if quantity >= 0 and quantity <= self.get_resources(resource):
