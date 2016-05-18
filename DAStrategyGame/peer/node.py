@@ -104,6 +104,7 @@ class Node(object):
 
     def handle_message(self, socket, addr, msg):
         node = (msg['uuid'], addr[0], msg['port'], msg['nickname'])
+        addr = (addr[0], msg['port'])
         msg_level = msg['level']
         msg_type = msg['type']
 
