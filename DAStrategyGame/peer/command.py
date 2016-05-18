@@ -162,6 +162,7 @@ def main(argv):
 
 
 if __name__ == '__main__':
+    print Node.__dict__
     # [command.py txx role port]
     # [command.py txx role port remoteIP remotePort]
     try:

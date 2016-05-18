@@ -72,6 +72,8 @@ class BankNode(node.Node):
         return False
 
 def main(argv):
+    print router
+    print BankNode.__dict__
     node = BankNode(argv[1], int(argv[2]))
     # for debug only
     while True:
@@ -96,6 +98,9 @@ def main(argv):
         # get cdkey list
         elif ws[0] == "list" and len(ws)==1:
             logging.info("we have the available list as: %s" % node.bank.cdkey_list)
+
+        elif ws[0] == 'nodelist':
+            logging.info('current local node list: %s' % node.nodeList)
 
         # send msg
         elif ws[0] == "activate" and len(ws)==4:

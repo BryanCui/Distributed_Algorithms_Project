@@ -117,7 +117,6 @@ class Node(object):
         # check if this message is from an unknown node, add it to nodeList
         if not self.hasNode(msg['uuid']) and self._uuid != msg['uuid']:
             # notify the other node in my list
-            logging.info('fuck %s' % self.nodeList)
             for n in self.nodeList:
                 self.oneway_message((n[1], n[2]), self.msg.notifyNewNode(node))
 
@@ -126,13 +125,23 @@ class Node(object):
 
         if msg_level in router:
             cls = self.__class__
-            func = cls.__dict__[router[msg_level]]
-            apply(func, (self, socket, addr, node, msg))
+            func = cls.__dict__.get(router[msg_level], None)
+            if func == None:
+                cls = cls.__bases__[0]
+                func = cls.__dict__[router[msg_level]]
+                apply(func, (self, socket, addr, node, msg))
+            else:
+                apply(func, (self, socket, addr, node, msg))
 
         if (msg_level, msg_type) in router:
             cls = self.__class__
-            func = cls.__dict__[router[(msg_level, msg_type)]]
-            apply(func, (self, socket, addr, node, msg))
+            func = cls.__dict__.get(router[(msg_level, msg_type)], None)
+            if func == None:
+                cls = cls.__bases__[0]
+                func = cls.__dict__[router[(msg_level, msg_type)]]
+                apply(func, (self, socket, addr, node, msg))
+            else:
+                apply(func, (self, socket, addr, node, msg))
 
     # begin handlers
     def onNotifyNewNode(self, socket, addr, node, msg):
