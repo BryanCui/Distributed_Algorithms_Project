@@ -4,9 +4,11 @@
 import npyscreen
 from PeopleList import PeopleList
 
+from peer.command import Command
+
 class MainScreen(npyscreen.Form):
 
-    def __init__(self, name):
+    def __init__(self, name, command):
         npyscreen.Form.__init__(self, name="Tradercraft " + name)
 
         self.inventoryText = self.add_widget(npyscreen.MultiLineEdit
@@ -26,21 +28,25 @@ class MainScreen(npyscreen.Form):
             , relx=50
             , rely=3
             , max_height=5
-            , values = [
-                "People 1"
-                ,"People 2"
-                ,"People 3"
-                ,"People 4"
-                ,"People 5"
-                ,"People 6"
-                ,"People 7"
-            ]
             , scroll_exit=True)
 
         self.refreshBtn = self.add_widget(npyscreen.Button
             , relx=49
             , rely=9
+            , when_pressed_function=self.lookaround
             , name="Look around")
+
+        self.command = command
+        self.lookaround()
+
+    #refresh the people around you
+    def lookaround(self):
+        popup = npyscreen.Popup(name="I am clicked")
+        popup.edit()
+        list = []
+        for people in self.command.execute('localNodeList'):
+            list.append(people[3])
+        self.peopleSelection.values=list
 
     # get the player's inventory in formatted string
     def getPlayerIventory(self):
