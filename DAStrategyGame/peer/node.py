@@ -174,6 +174,7 @@ class Node(object):
         quantity = int(msg['quantity'])
         self._transaction.confirm_start_transaction(socket, resource, quantity)
 
+
     def onConfirmStartTransaction(self, socket, addr, node, msg):
         resource = msg['resource']
         quantity = int(msg['quantity'])
