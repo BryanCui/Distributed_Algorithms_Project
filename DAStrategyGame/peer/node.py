@@ -27,6 +27,8 @@ router = {
     ('app', 'showTradingCenter'): 'onShowTradingCenter',
     ('app', 'returnTradingCenter'): 'onReturnTradingCenter',
     ('app', 'returnActivate'): 'onReturnActivate',
+    ('app', 'checkAlive'): 'onCheckAlive',
+    ('app', 'alive'): 'onAlive',
     ('snapshot', 'marker'): 'onMarker',
     'app': 'onApp',
 }
@@ -64,7 +66,6 @@ class Node(object):
     def lastLocalSnapshot(self):
         return self._lastLocalSnapshot
     
-
     def listen(self):
         while True:
             logging.info('Listening...')
@@ -87,8 +88,7 @@ class Node(object):
             self.handle_message(client, addr, msg)
             client.close()
             return msg
-        except Exception, e:
-            print e
+        except:
             return False
 
     def oneway_message(self, addr, msg):
@@ -161,6 +161,12 @@ class Node(object):
 
     def onAck(self, socket, addr, node, msg):
         # do nothing yet
+        pass
+
+    def onCheckAlive(self, socket, addr, node, msg):
+        socket.send(self.msg.alive())
+
+    def onAlive(self, socket, addr, node, msg):
         pass
 
     def onStartTransaction(self, socket, addr, node, msg):
@@ -255,6 +261,14 @@ class Node(object):
         for n in self.nodeList:
             self.send_message((n[1], n[2]), self.msg.logout())
         logging.info('logged out. bye.')
+        return True
+
+    def checkAlive(self):
+        for n in self.nodeList:
+            result = self.send_message((n[1], n[2]), self.msg.checkAlive())
+            if result == False:
+                self.nodeList.remove(n)
+                logging.info('deleted node (%d,%s,%d,%s)' % n)
         return True
 
     # begin helpers

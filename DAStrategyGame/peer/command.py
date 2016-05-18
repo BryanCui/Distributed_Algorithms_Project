@@ -13,6 +13,7 @@ route = {
     'localResource': 'localResource',
     'remoteNodeResource': 'remoteNodeResource',
     'startSnapshot': 'startSnapshot',
+    'checkAlive': 'checkAlive',
     'logout': 'logout'
 }
 
@@ -70,6 +71,10 @@ class Command(object):
     def startSnapshot(self):
         return self.node.startSnapshot()
 
+    def checkAlive(self):
+        logging.info('fuck')
+        return self.node.checkAlive()
+
     def logout(self):
         return self.node.logout()
 
@@ -101,6 +106,7 @@ def main(argv):
             continue
         ws = line.split()
         result = None
+        logging.info(ws[0])
         if ws[0] == 'connect':
             result = command.execute('inquireNodeList', (ws[1], int(ws[2])))
         elif ws[0] == 'nodelist':
@@ -124,6 +130,9 @@ def main(argv):
         #     node._transaction.start_transaction(ws[3], ws[4])
         elif ws[0] == 'snapshot':
             result = command.execute('startSnapshot')
+        elif ws[0] == 'checkAlive':
+            result = command.execute('checkAlive')
+            logging.info(result)
         elif ws[0] == 'exit':
             sys.exit(0)
         
