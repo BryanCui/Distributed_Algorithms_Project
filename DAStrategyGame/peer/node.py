@@ -272,6 +272,9 @@ class Node(object):
                 logging.info('deleted node (%d,%s,%d,%s,%s)' % n)
         return True
 
+    def activate(self, addr, cdkey):
+        return self.send_message(addr, node.msg.activateCdkey(cdkey))
+
     # begin helpers
     def deleteNode(self, uuid):
         for node in self.nodeList:
