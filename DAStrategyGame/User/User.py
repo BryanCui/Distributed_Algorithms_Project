@@ -170,11 +170,14 @@ class User(Singleton):
     # consume 1 food every 15 second, if food == 0, then user dies
     def food_consuming(self):
         while True:
-            sleep(15)
-            if self.__food == 0:
-                logging.info('You are out of food!!! DEAD!!')
+            sleep(8)
+            if self.__food == 0 or self.__wood == 0 or self.__mineral == 0 or self.__leather == 0:
+                logging.info('You are DEAD!!')
                 exit()
             self.__food -= 1
+            self.__wood -= 1
+            self.__mineral -= 1
+            self.__leather -= 1
             self.fire_notification()
 
     def role_thread(self, role):
