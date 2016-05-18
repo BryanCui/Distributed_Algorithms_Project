@@ -194,6 +194,7 @@ class Node(object):
         if balance > 0:
             self.user.add_money(balance)
             self.user.show_resources()
+            self.fire_notification()
         logging.info("%s, withdraw %s "%(msg['info'],msg['balance']))
 
 
@@ -203,10 +204,12 @@ class Node(object):
     def onConfirmFinishTransaction(self, socket, addr, node, msg):
         self._transaction.done_transaction(addr)
         self._transaction.set_finished(True)
+        NotificationCentre.defaultCentre().fire('transaction_finish', 'True')
         self.fire_notification()
 
     def onDoneTransaction(self, socket, addr, node, msg):
         self._transaction.set_finished(True)
+        NotificationCentre.defaultCentre().fire('transaction_finish', 'True')
         self.fire_notification()
 
     def onShowTradingCenter(self, socket, addr, node, msg):
@@ -281,6 +284,10 @@ class Node(object):
                 return True
         return False
     # end of helpers
+
+    def start_transaction(self, addr, resource, quantity):
+        self._transaction = Transactions(addr, self._msg, self, self.user)
+        self._transaction.start_transaction(resource, quantity)
 
     def fire_notification(self):
         NotificationCentre.defaultCentre().fire('resource_change', {
