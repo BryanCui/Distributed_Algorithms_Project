@@ -1,6 +1,5 @@
 # Transactions
 
-from User.Resource import *
 from Singleton import Singleton
 from peer.notificationCentre import NotificationCentre
 import thread
@@ -24,23 +23,38 @@ class Transactions(Singleton):
         self.__MSG = msg
         self.__user = user
         self.__is_finished = False
+        self.__transaction_running = False
+
+    # get the status of transaction whether the transaction is running. If running, other people cannot start
+    # a transaction
+    def get_transaction_running(self):
+        return self.__transaction_running
+
+    # set transaction status
+    def set_transaction_running(self, is_running):
+        self.__transaction_running = is_running
 
     # send a message to start a transaction
     def start_transaction(self, resource, quantity):
         self.set_user_status(self.__user)
         self.set_trading_status(self.__user.trading_center)
         self.transaction_thread()
-        if self.__node.send_message(self.__host, self.__MSG.startTransaction(resource, quantity)):
+        message = self.__node.send_message(self.__host, self.__MSG.startTransaction(resource, quantity))
+        if message != False and message['type'] != 'transactionRunning':
             return True
         else:
             return False
 
     # send a message back to confirm a transaction
     def confirm_start_transaction(self, socket, resource, quantity):
-        self.set_user_status(self.__user)
-        self.set_trading_status(self.__user.trading_center)
-        socket.send(self.__MSG.confirmStartTransaction(resource, quantity))
-        self.transaction_thread()
+        if not self.get_transaction_running():
+            self.set_transaction_running(True)
+            self.set_user_status(self.__user)
+            self.set_trading_status(self.__user.trading_center)
+            socket.send(self.__MSG.confirmStartTransaction(resource, quantity))
+            self.transaction_thread()
+        else:
+            socket.send(self.__MSG.transactionRunning())
 
     # send a message to finish the transaction
     def finish_transaction(self, addr, msg):
@@ -53,6 +67,7 @@ class Transactions(Singleton):
     # send a message back to confirm a transaction finished
     def confirm_finish_transaction(self, socket):
         socket.send(self.__MSG.confirmFinishTransaction())
+        self.set_transaction_running(False)
 
     # send a message to finally finish the transaction
     def done_transaction(self, addr):

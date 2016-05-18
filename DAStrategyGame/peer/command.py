@@ -17,6 +17,7 @@ route = {
     'toTrade': 'toTrade',
     'toStock': 'toStock',
     'buy': 'buy',
+    'activate': 'activate',
     'logout': 'logout'
 }
 
@@ -92,6 +93,9 @@ class Command(object):
     def buy(self, addr, resource, num):
         return self.node.start_transaction(addr, resource, int(num))
 
+    def activate(self, addr, cdkey):
+        return self.node.send_message(addr, self.node.msg.activateCdkey(cdkey))
+
     # login nickname role address(ip:port)
     # 
 
@@ -121,6 +125,16 @@ def main(argv):
             result = command.execute('logout')
         elif ws[0] == 'show':
             result = command.execute('localResource')
+        elif ws[0] == 'buy':
+            result = command.execute('buy', (ws[1], int(ws[2]), ws[3], int(ws[4])))
+        elif ws[0] == 'stock':
+            result = command.execute('toStock', ws[1], int(ws[2]))
+        elif ws[0] == 'trade':
+            result = command.execute('toTrade', ws[1], int(ws[2]), int(ws[3]))
+        elif ws[0] == 'remote':
+            result = command.execute('remoteNodeResource', (ws[1], int(ws[2])))
+        elif ws[0] == 'activate':
+            result = command.execute('activate', (ws[1], int(ws[2])), ws[3])
         # elif ws[0] == 'resource':
         #     logging.info(node.user.show_resources())
         # elif ws[0] == 'trading_center':

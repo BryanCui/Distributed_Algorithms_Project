@@ -4,12 +4,20 @@ import sys, thread, time, logging
 import threading
 from bank import Bank
 import node
+'''
+__author__ = 'Da'
 
+'''
 router = node.router
 router[('app', 'activate')] = 'onActivate'
 
 logging.getLogger().setLevel(logging.INFO)
 
+'''
+Bank node persists to provide service
+__author
+
+'''
 class BankNode(node.Node):
     def __init__(self, nickname, port):
         # over
