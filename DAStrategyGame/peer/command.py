@@ -3,7 +3,7 @@
 import sys, logging
 from notificationCentre import NotificationCentre
 from node import Node
-# logging.getLogger().setLevel(logging.INFO)
+logging.getLogger().setLevel(logging.INFO)
 
 route = {
     'createGame': 'createGame',
@@ -60,7 +60,7 @@ class Command(object):
         return True
 
     def inquireNodeList(self, ip, port):
-        response = self.node.send_message((ip, port), self.node.msg.requireNodeList())
+        response = self.node.send_message((ip, int(port)), self.node.msg.requireNodeList())
         return False
 
     def localNodeList(self):
@@ -73,7 +73,7 @@ class Command(object):
         return self.node.user.get_trading_center_status()
 
     def remoteNodeResource(self, ip, port):
-        response = self.node.send_message((ip, port), self.node.msg.showTradingCenter())
+        response = self.node.send_message((ip, int(port)), self.node.msg.showTradingCenter())
         return response['tradingList']
 
     def startSnapshot(self):
@@ -94,10 +94,10 @@ class Command(object):
         return self.node.user.get_resource_from_trading_center_back(resource, int(num))
 
     def buy(self, ip, port, resource, num):
-        return self.node.start_transaction((ip, port), resource, int(num))
+        return self.node.start_transaction((ip, int(port)), resource, int(num))
 
     def activate(self, ip, port, cdkey):
-        return self.node.send_message((ip, port), self.node.msg.activateCdkey(cdkey))
+        return self.node.send_message((ip, int(port)), self.node.msg.activateCdkey(cdkey))
 
     # login nickname role address(ip:port)
     # 
