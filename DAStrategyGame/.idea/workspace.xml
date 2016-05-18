@@ -38,11 +38,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="User.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="User.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/User/User.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="420">
-              <caret line="141" column="50" selection-start-line="141" selection-start-column="50" selection-end-line="141" selection-end-column="50" />
+            <state relative-caret-position="450">
+              <caret line="145" column="24" selection-start-line="145" selection-start-column="24" selection-end-line="145" selection-end-column="24" />
               <folding>
                 <element signature="e#7#21#0" expanded="true" />
               </folding>
@@ -74,7 +74,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="node.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="node.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/peer/node.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="328">
@@ -143,8 +143,8 @@
         <option value="$PROJECT_DIR$/peer/snapshot.py" />
         <option value="$PROJECT_DIR$/Transactions/Transactions.py" />
         <option value="$PROJECT_DIR$/User/TradingCenter.py" />
-        <option value="$PROJECT_DIR$/User/User.py" />
         <option value="$PROJECT_DIR$/peer/node.py" />
+        <option value="$PROJECT_DIR$/User/User.py" />
       </list>
     </option>
   </component>
@@ -817,16 +817,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/User/User.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="141" column="50" selection-start-line="141" selection-start-column="50" selection-end-line="141" selection-end-column="50" />
-          <folding>
-            <element signature="e#7#21#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/peer/command.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="990">
@@ -861,6 +851,16 @@
           <caret line="196" column="36" selection-start-line="196" selection-start-column="36" selection-end-line="196" selection-end-column="36" />
           <folding>
             <element signature="e#16#52#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/User/User.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="145" column="24" selection-start-line="145" selection-start-column="24" selection-end-line="145" selection-end-column="24" />
+          <folding>
+            <element signature="e#7#21#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -140,8 +140,10 @@ class User(Singleton):
         if quantity >= 0 and quantity <= self.trading_center.get_resources(resource):
             self.__trading_center.consume_resources(resource, quantity)
             self.add_resources(resource, quantity)
+            return True
         else:
             logging.info('No enough resource!!')
+            return False
 
     # get current resource status
     def get_user_resource_status(self):
