@@ -1,7 +1,7 @@
 # coding=UTF-8
 
 import socket, thread, time, logging
-import message
+import message, snapshot
 import sys
 sys.path.append("../")
 
@@ -23,7 +23,8 @@ router = {
     ('app', 'confirmFinishTransaction'): 'onConfirmFinishTransaction',
     ('app', 'showTradingCenter'): 'onShowTradingCenter',
     ('app', 'returnTradingCenter'): 'onReturnTradingCenter',
-    ('snapshot', ''): ''
+    ('snapshot', 'marker'): 'onMarker',
+    'app': 'onApp',
 }
 
 
@@ -39,6 +40,7 @@ class Node(object):
         self._server.listen(5)
         self._user = User()
         self._transaction = Transactions('', self._msg, self,self._user)
+        self._lastLocalSnapshot = None
         print self._user.show_resources()
         thread.start_new_thread(self.listen, ())
 
@@ -53,6 +55,11 @@ class Node(object):
     @property
     def user(self):
         return self._user
+
+    @property
+    def lastLocalSnapshot(self):
+        return self._lastLocalSnapshot
+    
 
     def listen(self):
         while True:
@@ -78,6 +85,15 @@ class Node(object):
         except:
             return False
 
+    def oneway_message(self, addr, msg):
+        try:
+            client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            client.connect(addr)
+            client.send(msg)
+            return True
+        except:
+            return False
+
     def handle_client(self, client_socket, addr):
         request = client_socket.recv(1024 * 1024)
         logging.info('received %s' % request)
@@ -96,6 +112,11 @@ class Node(object):
         if not self.hasNode(msg['uuid']) and self._uuid != msg['uuid']:
             self.nodeList.append(node)
             logging.info('add node (%d,%s,%d,%s)' % node)
+
+        if msg_level in router:
+            cls = self.__class__
+            func = cls.__dict__[router[msg_level]]
+            apply(func, (self, socket, addr, node, msg))
 
         if (msg_level, msg_type) in router:
             cls = self.__class__
@@ -160,8 +181,53 @@ class Node(object):
     def onReturnTradingCenter(self, socket, addr, node, msg):
         for (item, value) in msg['tradingList'].items():
             logging.info(item + ': ' + str(value[0]) + ', Price: ' + str(value[1]))
+
+    def onMarker(self, socket, addr, node, msg):
+        if self.lastLocalSnapshot == None or self.lastLocalSnapshot.isDone == True:
+            # take new snapshot
+            self._lastLocalSnapshot = snapshot.NodeSnapshot(nodeList=self.nodeList)
+            self.lastLocalSnapshot.recordLocalState(self)
+            self.lastLocalSnapshot.finishRecord(node)
+            # send marker to all known node
+            for n in self.nodeList:
+                self.oneway_message((node[1], node[2]), self.msg.snapshotMarker())
+        else:
+            # continue current snapshot
+            self.lastLocalSnapshot.finishRecord(node)
+        # check if snapshot is done
+        if self.lastLocalSnapshot.isDone == True:
+            pass
+
+    def onApp(self, socket, addr, node, msg):
+        if self.lastLocalSnapshot != None and self.lastLocalSnapshot.isDone == False:
+            if self.lastLocalSnapshot.isRecording(node):
+                self.lastLocalSnapshot.recordMessage(node, msg)
+
+    def localState(self):
+        return {
+            'food': self.user.get_food(), 
+            'wood': self.user.get_wood(), 
+            'mineral': self.user.get_mineral(),
+            'leather': self.user.get_leather(),
+            'money': self.user.get_money()
+        }
+
     # end of handlers
 
+    def startSnapshot(self):
+        if self.lastLocalSnapshot != None and self.lastLocalSnapshot.isDone == False:
+            return False
+        else:
+            self._lastLocalSnapshot = snapshot.NodeSnapshot(nodeList=self.nodeList)
+            for n in self.nodeList:
+                self.oneway_message((n[1], n[2]), self.msg.snapshotMarker())
+            return True
+
+    def logout(self):
+        for n in self.nodeList:
+            node.send_message((n[1], n[2]), node.msg.logout())
+        logging.info('logged out. bye.')
+        return True
 
     # begin helpers
     def deleteNode(self, uuid):
@@ -206,6 +272,8 @@ def main(argv):
         elif ws[0] == 'buy':
             node._transaction = Transactions((ws[1], int(ws[2])), node._msg, node, node.user)
             node._transaction.start_transaction(ws[3], ws[4])
+        # elif ws[0] == 'snapshot':
+
 
 
 if __name__ == '__main__':

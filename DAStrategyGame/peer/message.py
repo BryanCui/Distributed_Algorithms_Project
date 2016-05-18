@@ -81,5 +81,11 @@ class Message:
         msg.update(self.basic())
         return json.dumps(msg)
 
+
+    def snapshotMarker(self):
+        msg = {'level': 'snapshot', 'type': 'marker'}
+        msg.update(self.basic())
+        return json.dumps(msg)
+
     def parse(self, msg):
         return json.loads(msg)
