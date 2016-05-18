@@ -21,10 +21,15 @@ class ActionControllerCmd(npyscreen.ActionControllerSimple):
         if commands[0] == "q":
             sys.exit() 
 
-        App.updateInfo()
-
         if commands[0] != "r":
-            self.parent.wMain.values.append(App.command.execute(commands[0], commands[1:]))
+            if len(commands) >= 2: 
+                result = App.command.execute(commands[0], *commands[1:])
+            else:
+                result = App.command.execute(commands[0])
+
+        App.updateInfo()
+        self.parent.wMain.values.append(result)
+
         self.parent.wMain.display()
 
 class CommandActive(npyscreen.FormMuttActiveTraditional):
@@ -114,7 +119,7 @@ class App(npyscreen.NPSApp):
                 continue
             else:
                 if resourceDict[key]["for trade"]:
-                    info.append(key + ' ' + str(resourceDict[key]['stock']) + " for trade")
+                    info.append(key + ' ' + str(resourceDict[key]['stock']) + " for trade at price " + str(resourceDict[key]['price']))
                 else:
                     info.append(key + ' ' + str(resourceDict[key]['stock']) + " in inventory")
 
