@@ -11,7 +11,7 @@ __author__ = 'Da'
 router = node.router
 router[('app', 'activate')] = 'onActivate'
 
-logging.getLogger().setLevel(logging.INFO)
+logging.getLogger().setLevel(logging.ERROR)
 
 '''
 Bank node persists to provide service

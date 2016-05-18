@@ -2,7 +2,7 @@
 import logging
 from notificationCentre import NotificationCentre
 
-logging.getLogger().setLevel(logging.INFO)
+logging.getLogger().setLevel(logging.ERROR)
 
 # We assume there is only one snapshot taking place at any time.
 class NodeSnapshot(object):
