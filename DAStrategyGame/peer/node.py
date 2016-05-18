@@ -13,6 +13,8 @@ logging.getLogger().setLevel(logging.INFO)
 
 router = {
     ('app', 'notifyNewNode'): 'onNotifyNewNode',
+    ('app', 'notifyDeleteNode'): 'onNotifyDeleteNode',
+    ('app', 'notifyReplaceNode'): 'onNotifyReplaceNode',
     ('app', 'requireNodeList'): 'onRequireNodeList',
     ('app', 'provideNodeList'): 'onProvideNodeList',
     ('app', 'logout'): 'onLogout',
@@ -116,12 +118,20 @@ class Node(object):
 
         # check if this message is from an unknown node, add it to nodeList
         if not self.hasNode(msg['uuid']) and self._uuid != msg['uuid']:
-            # notify the other node in my list
-            for n in self.nodeList:
-                self.oneway_message((n[1], n[2]), self.msg.notifyNewNode(node))
-                
-            self.nodeList.append(node)
-            logging.info('add node %s' % node)
+            # if (ip, port) duplicates, then replace
+            preNode = self.getNode(node[1], node[2])
+            if pre != None:
+                self.nodeList.remove(preNode)
+                self.nodeList.append(node)
+                for n in self.nodeList:
+                    self.oneway_message((n[1], n[2]), self.msg.notifyReplaceNode(preNode, postNode))
+                logging.info('replace node %s with node %s' % (preNode, postNode))
+            else:
+                self.nodeList.append(node)
+                # notify the other node in my list
+                for n in self.nodeList:
+                    self.oneway_message((n[1], n[2]), self.msg.notifyNewNode(node))
+                logging.info('add node %s' % node)
 
         if msg_level in router:
             cls = self.__class__
@@ -144,10 +154,26 @@ class Node(object):
                 apply(func, (self, socket, addr, node, msg))
 
     # begin handlers
+    def onNotifyReplaceNode(self, socket, addr, node, msg):
+        preNode = [msg['preNode']['uuid'], msg['preNode']['ip'], msg['preNode']['port'], msg['preNode']['nickname'], msg['preNode']['role']]
+        postNode = [msg['postNode']['uuid'], msg['postNode']['ip'], msg['postNode']['port'], msg['postNode']['nickname'], msg['postNode']['role']]
+        if preNode in self.nodeList:
+            self.nodeList.remove(preNode)
+        if postNode not in self.nodeList:
+            self.nodeList.append(postNode)
+        logging.info('replace node %s with node %s' % (preNode, postNode))
+
+    def onNotifyDeleteNode(self, socket, addr, node, msg):
+        node = [msg['node']['uuid'], msg['node']['ip'], msg['node']['port'], msg['node']['nickname'], msg['node']['role']]
+        if node in self.nodeList:
+            self.nodeList.remove(node)
+            logging.info('delete node %s' % node)
+
     def onNotifyNewNode(self, socket, addr, node, msg):
         node = [msg['node']['uuid'], msg['node']['ip'], msg['node']['port'], msg['node']['nickname'], msg['node']['role']]
-        self.nodeList.append(node)
-        logging.info('add node %s' % node)
+        if node not in self.nodeList:
+            self.nodeList.append(node)
+            logging.info('add node %s' % node)
 
     def onRequireNodeList(self, socket, addr, node, msg):
         # reply with local node list
@@ -278,6 +304,8 @@ class Node(object):
             result = self.send_message((n[1], n[2]), self.msg.checkAlive())
             if result == False:
                 self.nodeList.remove(n)
+                for nn in self.nodeList:
+                    self.oneway_message((nn[1], nn[2]), self.msg.notifyDeleteNode(n))
                 logging.info('deleted node %s' % n)
         return True
 
@@ -296,6 +324,12 @@ class Node(object):
             if node[0] == uuid:
                 return True
         return False
+
+    def getNode(self, ip, port):
+        for node in self.nodeList:
+            if node[1] == ip and node[2] == int(port):
+                return node
+        return None
     # end of helpers
 
     def start_transaction(self, addr, resource, quantity):

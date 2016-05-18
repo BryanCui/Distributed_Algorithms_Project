@@ -22,6 +22,17 @@ class Message:
         msg.update(self.basic())
         return json.dumps(msg)
 
+    def notifyReplaceNode(self, preNode, postNode):
+        msg = {'level': 'app', 'type': 'notifyReplaceNode', 'preNode': {'uuid': preNode[0], 'ip': preNode[1], 'port': preNode[2], 'nickname': preNode[3], 'preNode': node[4]}, 
+            'postNode': {'uuid': postNode[0], 'ip': postNode[1], 'port': postNode[2], 'nickname': postNode[3], 'preNode': postNode[4]}}
+        msg.update(self.basic())
+        return json.dumps(msg)
+
+    def notifyDeleteNode(self, node):
+        msg = {'level': 'app', 'type': 'notifyDeleteNode', 'node': {'uuid': node[0], 'ip': node[1], 'port': node[2], 'nickname': node[3], 'role': node[4]}}
+        msg.update(self.basic())
+        return json.dumps(msg)
+
     def notifyNewNode(self, node):
         msg = {'level': 'app', 'type': 'notifyNewNode', 'node': {'uuid': node[0], 'ip': node[1], 'port': node[2], 'nickname': node[3], 'role': node[4]}}
         msg.update(self.basic())
