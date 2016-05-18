@@ -31,4 +31,4 @@ class PeopleList(npyscreen.MultiLineAction):
 class RefreshBtn(npyscreen.ButtonPress):
 
     def whenPressed(self):
-        self.parent.lookaround()
+        self.parent.lookAround()

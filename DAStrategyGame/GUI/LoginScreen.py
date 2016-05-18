@@ -21,7 +21,7 @@ class LoginScreen(npyscreen.ActionForm):
         self.nickname = self.add_widget(npyscreen.TitleText, name="Nick Name"
             , value="trader" + str(random.randint(100, 999)))
         self.address = self.add_widget(npyscreen.TitleText
-            , name="Server address"
+            , name="Address"
             , value="0.0.0.0:5556")
         self.listenport = self.add_widget(npyscreen.TitleText
             , name="Listen to"

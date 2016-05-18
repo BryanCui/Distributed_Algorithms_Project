@@ -17,10 +17,9 @@ class MainScreen(npyscreen.Form):
             , max_height=3
             , editable=False)
 
-        self.add_widget(npyscreen.FixedText
+        self.peoplenote = self.add_widget(npyscreen.FixedText
             , relx=50
             , rely=2
-            , value="7 People around you"
             , color='IMPORTANT'
             , editable=False)
 
@@ -36,18 +35,19 @@ class MainScreen(npyscreen.Form):
             , name="Look around")
 
         self.command = command
-        self.lookaround()
+        self.lookAround()
 
     #refresh the people around you
-    def lookaround(self):
+    def lookAround(self):
         list = []
         for people in self.command.execute('localNodeList'):
             list.append(people[3] + " the " + people[4])
         self.peopleSelection.values=list
+        self.peoplenote.value = str(len(list)) + " people around you:"
+        self.display()
 
     # get the player's inventory in formatted string
-    def getPlayerIventory(self):
-        return '''
-Gold: 1000     Iron: 10
-Wood: 50       Food: 0
-'''
+    def updateIventory(self):
+        list = []
+        for resource in self.command.execute('localResource'):
+            list.append()
