@@ -130,7 +130,7 @@ def main(argv):
         elif ws[0] == 'stock':
             result = command.execute('toStock', ws[1], int(ws[2]))
         elif ws[0] == 'trade':
-            result = command.execute('toStock', ws[1], int(ws[2]), int(ws[3]))
+            result = command.execute('toTrade', ws[1], int(ws[2]), int(ws[3]))
         elif ws[0] == 'remote':
             result = command.execute('remoteNodeResource', (ws[1], int(ws[2])))
         elif ws[0] == 'activate':
