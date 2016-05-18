@@ -119,10 +119,10 @@ class App(npyscreen.NPSApp):
             if key == 'money':
                 continue
             else:
-                if resourceDict[key]["for trade"]:
-                    info.append(key + ' ' + str(resourceDict[key]['stock']) + " for trade at price " + str(resourceDict[key]['price']))
+                if resourceDict[key]["for trade"] == 0:
+                    info.append(key + ': ' + str(resourceDict[key]['stock']) + " instock")
                 else:
-                    info.append(key + ' ' + str(resourceDict[key]['stock']) + " in inventory")
+                    info.append(key + ': ' + str(resourceDict[key]['for trade']) + " for trade at price " + str(resourceDict[key]['price']) + ", and " + str(resourceDict[key]['stock']) + " in stock.")
 
         info.append("------------------------------")
         self.c.wMain.values = info
