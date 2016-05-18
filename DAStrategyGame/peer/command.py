@@ -94,7 +94,7 @@ class Command(object):
         return self.node.start_transaction(addr, resource, int(num))
 
     def activate(self, addr, cdkey):
-        return self.node.send_message(addr, node.msg.activateCdkey(cdkey))
+        return self.node.send_message(addr, self.node.msg.activateCdkey(cdkey))
 
     # login nickname role address(ip:port)
     # 
