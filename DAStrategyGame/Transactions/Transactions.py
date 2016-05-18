@@ -29,8 +29,11 @@ class Transactions(Singleton):
     def start_transaction(self, resource, quantity):
         self.set_user_status(self.__user)
         self.set_trading_status(self.__user.trading_center)
-        self.__node.send_message(self.__host, self.__MSG.startTransaction(resource, quantity))
         self.transaction_thread()
+        if self.__node.send_message(self.__host, self.__MSG.startTransaction(resource, quantity)):
+            return True
+        else:
+            return False
 
     # send a message back to confirm a transaction
     def confirm_start_transaction(self, socket, resource, quantity):
