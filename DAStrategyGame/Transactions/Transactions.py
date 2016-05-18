@@ -37,7 +37,6 @@ class Transactions(Singleton):
         self.transaction_thread()
 
     def finish_transaction(self, addr, msg):
-        sleep(5)
         resource = msg['resource']
         quantity = msg['quantity']
         price = msg['price']
