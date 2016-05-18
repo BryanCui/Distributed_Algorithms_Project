@@ -5,7 +5,7 @@ from TradingCenter import TradingCenter
 from Singleton import Singleton
 from time import sleep
 from peer.notificationCentre import NotificationCentre
-import thread
+import thread, logging
 
 
 class User(Singleton):
@@ -89,6 +89,19 @@ class User(Singleton):
             print 'Wrong resource name!'
             return
 
+    def get_resources(self, resource):
+        if resource == 'food':
+            return self.__food
+        elif resource == 'wood':
+            return self.__wood
+        elif resource == 'mineral':
+            return self.__mineral
+        elif resource == 'leather':
+            return self.__leather
+        else:
+            logging.info('Wrong resource name!')
+            return
+
     def consume_resources(self, resource, quantity):
         if resource == 'food':
             self.consume_food(quantity)
@@ -102,22 +115,25 @@ class User(Singleton):
             return
 
     def show_resources(self):
-        print 'Food: %d' % self.__food
-        print 'Wood: %d' % self.__wood
-        print 'Mineral: %d' % self.__mineral
-        print 'Leather: %d' % self.__leather
-        print 'Money: %d' % self.__money
-
-
-
+        logging.info('Food: %d' % self.__food)
+        logging.info('Wood: %d' % self.__wood)
+        logging.info('Mineral: %d' % self.__mineral)
+        logging.info('Leather: %d' % self.__leather)
+        logging.info('Money: %d' % self.__money)
 
     def put_resource_into_trading_center(self, resource, quantity, price):
-        self.__trading_center.set_resource_to_sell(resource, quantity, price)
-        self.consume_resources(resource, quantity)
+        if quantity >= 0 and quantity <= self.get_resources(resource):
+            self.__trading_center.set_resource_to_sell(resource, quantity, price)
+            self.consume_resources(resource, quantity)
+        else:
+            logging.info('No enough resource!!')
 
     def get_resource_from_trading_center_back(self, resource, quantity):
-        self.__trading_center.consume_resources(resource, quantity)
-        self.add_resources(resource, quantity)
+        if quantity >= 0 and quantity <= self.trading_center.get_resources(resource):
+            self.__trading_center.consume_resources(resource, quantity)
+            self.add_resources(resource, quantity)
+        else:
+            logging.info('No enough resource!!')
 
     def get_user_resource_status(self):
         return {
@@ -142,6 +158,9 @@ class User(Singleton):
     def food_consuming(self):
         while True:
             sleep(15)
+            if self.__food == 0:
+                logging.info('You are out of food!!! DEAD!!')
+                exit()
             self.__food -= 1
             self.fire_notification()
 

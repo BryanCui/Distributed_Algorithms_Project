@@ -27,3 +27,8 @@ class PeopleList(npyscreen.MultiLineAction):
             ]
             , scroll_exit=True)
         popup.edit()
+
+class RefreshBtn(npyscreen.ButtonPress):
+
+    def whenPressed(self):
+        self.parent.lookaround()

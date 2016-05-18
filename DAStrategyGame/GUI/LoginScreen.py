@@ -21,8 +21,11 @@ class LoginScreen(npyscreen.ActionForm):
         self.nickname = self.add_widget(npyscreen.TitleText, name="Nick Name"
             , value="trader" + str(random.randint(100, 999)))
         self.address = self.add_widget(npyscreen.TitleText
-            , name="Server IP"
-            , value="127.0.0.1:5555")
+            , name="Server address"
+            , value="0.0.0.0:5556")
+        self.listenport = self.add_widget(npyscreen.TitleText
+            , name="Listen to"
+            , value="5556")
 
         self.add_widget(npyscreen.FixedText
             , value=""
@@ -34,13 +37,10 @@ class LoginScreen(npyscreen.ActionForm):
             , value = [0,]
             , name="Pick your role"
             , values = [
-                "Farmer"
-                ,"Miner"
-                ,"Hunter"
-                ,"Handicraftsman"
-                ,"Tailor"
-                ,"Blacksmith"
-                ,"Timberjack"
+                "farmer"
+                ,"lumberjack"
+                ,"miner"
+                ,"fellmonger"
             ]
             , scroll_exit=True)
 
