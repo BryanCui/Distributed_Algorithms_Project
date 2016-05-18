@@ -42,7 +42,7 @@ class MainScreen(npyscreen.Form):
     def lookaround(self):
         list = []
         for people in self.command.execute('localNodeList'):
-            list.append(people[3])
+            list.append(people[3] + " the " + people[4])
         self.peopleSelection.values=list
 
     # get the player's inventory in formatted string
