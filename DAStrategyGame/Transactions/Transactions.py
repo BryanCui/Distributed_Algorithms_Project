@@ -25,9 +25,12 @@ class Transactions(Singleton):
         self.__is_finished = False
         self.__transaction_running = False
 
+    # get the status of transaction whether the transaction is running. If running, other people cannot start
+    # a transaction
     def get_transaction_running(self):
         return self.__transaction_running
 
+    # set transaction status
     def set_transaction_running(self, is_running):
         self.__transaction_running = is_running
 
