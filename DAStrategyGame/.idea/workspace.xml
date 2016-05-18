@@ -29,8 +29,8 @@
       <file leaf-file-name="message.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/peer/message.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1035">
-              <caret line="87" column="30" selection-start-line="80" selection-start-column="40" selection-end-line="80" selection-end-column="55" />
+            <state relative-caret-position="45">
+              <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -38,11 +38,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="User.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="User.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/User/User.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="315">
-              <caret line="134" column="48" selection-start-line="134" selection-start-column="48" selection-end-line="134" selection-end-column="48" />
+            <state relative-caret-position="420">
+              <caret line="141" column="50" selection-start-line="141" selection-start-column="50" selection-end-line="141" selection-end-column="50" />
               <folding>
                 <element signature="e#7#21#0" expanded="true" />
               </folding>
@@ -74,14 +74,36 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="node.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="node.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/peer/node.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2023">
-              <caret line="319" column="61" selection-start-line="319" selection-start-column="61" selection-end-line="319" selection-end-column="61" />
+            <state relative-caret-position="328">
+              <caret line="196" column="36" selection-start-line="196" selection-start-column="36" selection-end-line="196" selection-end-column="36" />
               <folding>
                 <element signature="e#16#52#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="command.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/peer/command.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="990">
+              <caret line="66" column="37" selection-start-line="66" selection-start-column="33" selection-end-line="66" selection-end-column="37" />
+              <folding>
+                <element signature="e#16#35#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="notificationCentre.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/peer/notificationCentre.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -119,10 +141,10 @@
         <option value="$PROJECT_DIR$/Singleton.py" />
         <option value="$PROJECT_DIR$/peer/message.py" />
         <option value="$PROJECT_DIR$/peer/snapshot.py" />
-        <option value="$PROJECT_DIR$/peer/node.py" />
         <option value="$PROJECT_DIR$/Transactions/Transactions.py" />
         <option value="$PROJECT_DIR$/User/TradingCenter.py" />
         <option value="$PROJECT_DIR$/User/User.py" />
+        <option value="$PROJECT_DIR$/peer/node.py" />
       </list>
     </option>
   </component>
@@ -501,7 +523,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="820" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2639485" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32967034" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -740,16 +762,6 @@
     <entry file="file://$PROJECT_DIR$/Server/Server.py" />
     <entry file="file://$PROJECT_DIR$/Logic/Bank.py" />
     <entry file="file://$PROJECT_DIR$/GUI/GUI.py" />
-    <entry file="file://$PROJECT_DIR$/peer/message.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1035">
-          <caret line="87" column="30" selection-start-line="80" selection-start-column="40" selection-end-line="80" selection-end-column="55" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/peer/node.py.orig" />
     <entry file="file:///System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/threading.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -785,26 +797,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/peer/command.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="385">
-          <caret line="66" column="37" selection-start-line="66" selection-start-column="33" selection-end-line="66" selection-end-column="37" />
-          <folding>
-            <element signature="e#16#35#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/peer/node.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2023">
-          <caret line="319" column="61" selection-start-line="319" selection-start-column="61" selection-end-line="319" selection-end-column="61" />
-          <folding>
-            <element signature="e#16#52#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Transactions/Transactions.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1815">
@@ -827,10 +819,48 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/User/User.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="134" column="48" selection-start-line="134" selection-start-column="48" selection-end-line="134" selection-end-column="48" />
+        <state relative-caret-position="420">
+          <caret line="141" column="50" selection-start-line="141" selection-start-column="50" selection-end-line="141" selection-end-column="50" />
           <folding>
             <element signature="e#7#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/peer/command.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="990">
+          <caret line="66" column="37" selection-start-line="66" selection-start-column="33" selection-end-line="66" selection-end-column="37" />
+          <folding>
+            <element signature="e#16#35#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/peer/notificationCentre.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/peer/message.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/peer/node.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="328">
+          <caret line="196" column="36" selection-start-line="196" selection-start-column="36" selection-end-line="196" selection-end-column="36" />
+          <folding>
+            <element signature="e#16#52#0" expanded="true" />
           </folding>
         </state>
       </provider>

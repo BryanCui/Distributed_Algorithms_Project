@@ -194,6 +194,7 @@ class Node(object):
         if balance > 0:
             self.user.add_money(balance)
             self.user.show_resources()
+            self.fire_notification()
         logging.info("%s, withdraw %s "%(msg['info'],msg['balance']))
 
 
