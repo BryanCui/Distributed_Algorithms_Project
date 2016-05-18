@@ -120,12 +120,12 @@ class Node(object):
         if not self.hasNode(msg['uuid']) and self._uuid != msg['uuid']:
             # if (ip, port) duplicates, then replace
             preNode = self.getNode(node[1], node[2])
-            if pre != None:
+            if preNode != None:
                 self.nodeList.remove(preNode)
                 self.nodeList.append(node)
                 for n in self.nodeList:
-                    self.oneway_message((n[1], n[2]), self.msg.notifyReplaceNode(preNode, postNode))
-                logging.info('replace node %s with node %s' % (preNode, postNode))
+                    self.oneway_message((n[1], n[2]), self.msg.notifyReplaceNode(preNode, node))
+                logging.info('replace node %s with node %s' % (preNode, node))
             else:
                 self.nodeList.append(node)
                 # notify the other node in my list
@@ -171,7 +171,7 @@ class Node(object):
 
     def onNotifyNewNode(self, socket, addr, node, msg):
         node = [msg['node']['uuid'], msg['node']['ip'], msg['node']['port'], msg['node']['nickname'], msg['node']['role']]
-        if node not in self.nodeList:
+        if node not in self.nodeList and node[0] != self._uuid:
             self.nodeList.append(node)
             logging.info('add node %s' % node)
 

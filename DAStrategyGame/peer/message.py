@@ -23,8 +23,8 @@ class Message:
         return json.dumps(msg)
 
     def notifyReplaceNode(self, preNode, postNode):
-        msg = {'level': 'app', 'type': 'notifyReplaceNode', 'preNode': {'uuid': preNode[0], 'ip': preNode[1], 'port': preNode[2], 'nickname': preNode[3], 'preNode': node[4]}, 
-            'postNode': {'uuid': postNode[0], 'ip': postNode[1], 'port': postNode[2], 'nickname': postNode[3], 'preNode': postNode[4]}}
+        msg = {'level': 'app', 'type': 'notifyReplaceNode', 'preNode': {'uuid': preNode[0], 'ip': preNode[1], 'port': preNode[2], 'nickname': preNode[3], 'role': preNode[4]}, 
+            'postNode': {'uuid': postNode[0], 'ip': postNode[1], 'port': postNode[2], 'nickname': postNode[3], 'role': postNode[4]}}
         msg.update(self.basic())
         return json.dumps(msg)
 
