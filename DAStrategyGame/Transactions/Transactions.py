@@ -98,10 +98,10 @@ class Transactions(Singleton):
                                                                         'mineral': self.__user.get_mineral(),
                                                                         'leather': self.__user.get_leather(),
                                                                         'money': self.__user.get_money()})
-            NotificationCentre.defaultCentre().fire('trading_change', {'food': self.__user.trading_center.get_food(),
-                                                                        'wood': self.__user.trading_center.get_wood(),
-                                                                        'mineral': self.__user.trading_center.get_mineral(),
-                                                                        'leather': self.__user.trading_center.get_leather()})
+            NotificationCentre.defaultCentre().fire('trading_change', {'food': (self.__user.trading_center.get_food(), self.__user.trading_center.get_food_price()),
+                                                                        'wood': (self.__user.trading_center.get_wood(), self.__user.trading_center.get_wood_price()),
+                                                                        'mineral': (self.__user.trading_center.get_mineral(), self.__user.trading_center.get_mineral_price()),
+                                                                        'leather': (self.__user.trading_center.get_leather(), self.__user.trading_center.get_leather_price())})
             self.set_finished(False)
 
 
