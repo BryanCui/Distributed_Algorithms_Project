@@ -154,9 +154,10 @@ class Node(object):
 
     def onConfirmFinishTransaction(self, socket, addr, node, msg):
         self._transaction.done_transaction(addr)
+        self._transaction.set_finished(True)
 
     def onDoneTransaction(self, socket, addr, node, msg):
-        return
+        self._transaction.set_finished(True)
 
     def onShowTradingCenter(self, socket, addr, node, msg):
         socket.send(self.msg.returnTradingCenter(self.user.get_trading_center().get_trading_list()))

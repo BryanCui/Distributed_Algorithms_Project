@@ -45,11 +45,9 @@ class Transactions(Singleton):
 
     def confirm_finish_transaction(self, socket):
         socket.send(self.__MSG.confirmFinishTransaction())
-        self.set_finished(True)
 
     def done_transaction(self, addr):
         self.__node.send_message(addr, self.__MSG.doneTransaction())
-        self.set_finished(True)
 
     def buy_resource(self, addr, resource, quantity):
         self.__user.add_resources(resource, quantity)
