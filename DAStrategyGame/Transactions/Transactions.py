@@ -86,7 +86,7 @@ class Transactions(Singleton):
             socket.send(
                 self.__MSG.sellResource(resource, quantity, self.__user.trading_center.get_resources_price(resource)))
         else:
-            socket.send(self.__MSG.doneTransaction())
+            return
 
     # save resources status before transaction in order to rollback the status if transaction fails
     def set_user_status(self, user):
