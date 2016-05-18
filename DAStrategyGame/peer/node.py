@@ -37,7 +37,7 @@ router = {
 class Node(object):
     def __init__(self, nickname, port, role):
         self._nickname = nickname
-        self._nodeList = []  # [(uuid:int, ip:str, port:int, nickname:str, role:str)]
+        self._nodeList = []  # [[uuid:int, ip:str, port:int, nickname:str, role:str]]
         self._port = port
         self._uuid = int(round(time.time() * 1000))
         self._msg = message.Message(self._uuid, port, nickname, role)
@@ -109,7 +109,7 @@ class Node(object):
         client_socket.close()
 
     def handle_message(self, socket, addr, msg):
-        node = (msg['uuid'], addr[0], msg['port'], msg['nickname'], msg['role'])
+        node = [msg['uuid'], addr[0], msg['port'], msg['nickname'], msg['role']]
         addr = (addr[0], msg['port'])
         msg_level = msg['level']
         msg_type = msg['type']
@@ -119,9 +119,9 @@ class Node(object):
             # notify the other node in my list
             for n in self.nodeList:
                 self.oneway_message((n[1], n[2]), self.msg.notifyNewNode(node))
-
+                
             self.nodeList.append(node)
-            logging.info('add node (%d,%s,%d,%s,%s)' % node)
+            logging.info('add node %s' % node)
 
         if msg_level in router:
             cls = self.__class__
@@ -145,9 +145,9 @@ class Node(object):
 
     # begin handlers
     def onNotifyNewNode(self, socket, addr, node, msg):
-        node = (msg['node']['uuid'], msg['node']['ip'], msg['node']['port'], msg['node']['nickname'], msg['node']['role'])
+        node = [msg['node']['uuid'], msg['node']['ip'], msg['node']['port'], msg['node']['nickname'], msg['node']['role']]
         self.nodeList.append(node)
-        logging.info('add node (%d,%s,%d,%s,%s)' % node)
+        logging.info('add node %s' % node)
 
     def onRequireNodeList(self, socket, addr, node, msg):
         # reply with local node list
@@ -166,7 +166,7 @@ class Node(object):
         # delete node
         self.deleteNode(msg['uuid'])
         socket.send(self.msg.ack())
-        logging.info('deleted node (%d,%s,%d,%s,%s)' % node)
+        logging.info('deleted node %s' % node)
 
     def onAck(self, socket, addr, node, msg):
         # do nothing yet
@@ -278,7 +278,7 @@ class Node(object):
             result = self.send_message((n[1], n[2]), self.msg.checkAlive())
             if result == False:
                 self.nodeList.remove(n)
-                logging.info('deleted node (%d,%s,%d,%s,%s)' % n)
+                logging.info('deleted node %s' % n)
         return True
 
     def activate(self, addr, cdkey):
