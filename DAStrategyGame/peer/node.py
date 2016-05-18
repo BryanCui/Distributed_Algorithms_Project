@@ -203,9 +203,11 @@ class Node(object):
     def onConfirmFinishTransaction(self, socket, addr, node, msg):
         self._transaction.done_transaction(addr)
         self._transaction.set_finished(True)
+        self.fire_notification()
 
     def onDoneTransaction(self, socket, addr, node, msg):
         self._transaction.set_finished(True)
+        self.fire_notification()
 
     def onShowTradingCenter(self, socket, addr, node, msg):
         socket.send(self.msg.returnTradingCenter(self.user.trading_center.get_trading_list()))
@@ -282,6 +284,18 @@ class Node(object):
                 return True
         return False
     # end of helpers
+
+    def fire_notification(self):
+        NotificationCentre.defaultCentre().fire('resource_change', {'food': self.user.get_food(),
+                                                                    'wood': self.user.get_wood(),
+                                                                    'mineral': self.user.get_mineral(),
+                                                                    'leather': self.user.get_leather(),
+                                                                    'money': self.user.get_money()})
+
+        NotificationCentre.defaultCentre().fire('trading_change', {'food': (self.user.trading_center.get_food(), self.user.trading_center.get_food_price()),
+                                                                   'wood': (self.user.trading_center.get_wood(), self.user.trading_center.get_wood_price()),
+                                                                   'mineral': (self.user.trading_center.get_mineral(), self.user.trading_center.get_mineral_price()),
+                                                                   'leather': (self.user.trading_center.get_leather(), self.user.trading_center.get_leather_price())})
 
 def main(argv):
     node = Node(argv[1], int(argv[2]), argv[3])

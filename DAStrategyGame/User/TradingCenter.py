@@ -93,4 +93,3 @@ class TradingCenter(Singleton):
                 'wood':(self.__wood[0], self.__wood[1]),
                 'mineral':(self.__mineral[0], self.__mineral[1]),
                 'leather':(self.__leather[0], self.__leather[1])}
-        #return [self.__food, self.__wood, self.__mineral, self.__leather]

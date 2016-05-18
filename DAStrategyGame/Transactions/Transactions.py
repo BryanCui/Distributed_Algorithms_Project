@@ -2,6 +2,7 @@
 
 from User.Resource import *
 from Singleton import Singleton
+from peer.notificationCentre import NotificationCentre
 import thread
 from time import sleep
 
@@ -92,6 +93,15 @@ class Transactions(Singleton):
         if not self.get_finished():
             self.recover_transaction_status_buy()
             self.recover_transaction_status_sell()
+            NotificationCentre.defaultCentre().fire('resource_change', {'food': self.__user.get_food(),
+                                                                        'wood': self.__user.get_wood(),
+                                                                        'mineral': self.__user.get_mineral(),
+                                                                        'leather': self.__user.get_leather(),
+                                                                        'money': self.__user.get_money()})
+            NotificationCentre.defaultCentre().fire('trading_change', {'food': (self.__user.trading_center.get_food(), self.__user.trading_center.get_food_price()),
+                                                                        'wood': (self.__user.trading_center.get_wood(), self.__user.trading_center.get_wood_price()),
+                                                                        'mineral': (self.__user.trading_center.get_mineral(), self.__user.trading_center.get_mineral_price()),
+                                                                        'leather': (self.__user.trading_center.get_leather(), self.__user.trading_center.get_leather_price())})
             self.set_finished(False)
 
 
