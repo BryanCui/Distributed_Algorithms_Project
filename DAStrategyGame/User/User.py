@@ -1,11 +1,11 @@
 # user
-
-
-from TradingCenter import TradingCenter
-from Singleton import Singleton
-from time import sleep
-from peer.notificationCentre import NotificationCentre
+import logging
 import thread
+from time import sleep
+
+from Singleton import Singleton
+from TradingCenter import TradingCenter
+from peer.notificationCentre import NotificationCentre
 
 
 class User(Singleton):
@@ -76,6 +76,7 @@ class User(Singleton):
     def get_money(self):
         return self.__money
 
+    # add resource quantity
     def add_resources(self, resource, quantity):
         if resource == 'food':
             self.add_food(quantity)
@@ -89,6 +90,21 @@ class User(Singleton):
             print 'Wrong resource name!'
             return
 
+    # get resources quantity according to the resource name
+    def get_resources(self, resource):
+        if resource == 'food':
+            return self.__food
+        elif resource == 'wood':
+            return self.__wood
+        elif resource == 'mineral':
+            return self.__mineral
+        elif resource == 'leather':
+            return self.__leather
+        else:
+            logging.info('Wrong resource name!')
+            return
+
+    # consume resources according to the resource name
     def consume_resources(self, resource, quantity):
         if resource == 'food':
             self.consume_food(quantity)
@@ -101,24 +117,35 @@ class User(Singleton):
         else:
             return
 
+    # show all resource the user has
     def show_resources(self):
-        print 'Food: %d' % self.__food
-        print 'Wood: %d' % self.__wood
-        print 'Mineral: %d' % self.__mineral
-        print 'Leather: %d' % self.__leather
-        print 'Money: %d' % self.__money
+        logging.info('Food: %d' % self.__food)
+        logging.info('Wood: %d' % self.__wood)
+        logging.info('Mineral: %d' % self.__mineral)
+        logging.info('Leather: %d' % self.__leather)
+        logging.info('Money: %d' % self.__money)
 
-
-
-
+    # put resources to trading center to sell
     def put_resource_into_trading_center(self, resource, quantity, price):
-        self.__trading_center.set_resource_to_sell(resource, quantity, price)
-        self.consume_resources(resource, quantity)
+        if quantity >= 0 and quantity <= self.get_resources(resource):
+            self.__trading_center.set_resource_to_sell(resource, quantity, price)
+            self.consume_resources(resource, quantity)
+            return True
+        else:
+            logging.info('No enough resource!!')
+            return False
 
+    # get resources back from trading center
     def get_resource_from_trading_center_back(self, resource, quantity):
-        self.__trading_center.consume_resources(resource, quantity)
-        self.add_resources(resource, quantity)
+        if quantity >= 0 and quantity <= self.trading_center.get_resources(resource):
+            self.__trading_center.consume_resources(resource, quantity)
+            self.add_resources(resource, quantity)
+            return True
+        else:
+            logging.info('No enough resource!!')
+            return False
 
+    # get current resource status
     def get_user_resource_status(self):
         return {
             'food': self.__food,
@@ -128,6 +155,7 @@ class User(Singleton):
             'money': self.__money
         }
 
+    # get current trading center status
     def get_trading_center_status(self):
         return {
             'food': (self.trading_center.get_food(), self.trading_center.get_food_price()),
@@ -139,15 +167,20 @@ class User(Singleton):
     def food_consuming_thread(self):
         thread.start_new_thread(self.food_consuming, ())
 
+    # consume 1 food every 15 second, if food == 0, then user dies
     def food_consuming(self):
         while True:
             sleep(15)
+            if self.__food == 0:
+                logging.info('You are out of food!!! DEAD!!')
+                exit()
             self.__food -= 1
             self.fire_notification()
 
     def role_thread(self, role):
         thread.start_new_thread(self.role_character, ())
 
+    # produce resource according to the user role
     def role_character(self):
         if self.__role == 'farmer':
             while True:
@@ -171,8 +204,9 @@ class User(Singleton):
                 self.fire_notification()
 
     def fire_notification(self):
-        NotificationCentre.defaultCentre().fire('resource_change', {'food': self.__food,
-                                                                    'wood': self.__wood,
-                                                                    'mineral': self.__mineral,
-                                                                    'leather': self.__leather,
-                                                                    'money': self.__money})
+        NotificationCentre.defaultCentre().fire('resource_change',
+                                                {'food': self.__food,
+                                                 'wood': self.__wood,
+                                                 'mineral': self.__mineral,
+                                                 'leather': self.__leather,
+                                                 'money': self.__money})

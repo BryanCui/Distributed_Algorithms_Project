@@ -27,6 +27,8 @@ router = {
     ('app', 'showTradingCenter'): 'onShowTradingCenter',
     ('app', 'returnTradingCenter'): 'onReturnTradingCenter',
     ('app', 'returnActivate'): 'onReturnActivate',
+    ('app', 'checkAlive'): 'onCheckAlive',
+    ('app', 'alive'): 'onAlive',
     ('snapshot', 'marker'): 'onMarker',
     'app': 'onApp',
 }
@@ -35,10 +37,10 @@ router = {
 class Node(object):
     def __init__(self, nickname, port, role):
         self._nickname = nickname
-        self._nodeList = []  # [(uuid:int, ip:str, port:int, nickname:str)]
+        self._nodeList = []  # [(uuid:int, ip:str, port:int, nickname:str, role:str)]
         self._port = port
         self._uuid = int(round(time.time() * 1000))
-        self._msg = message.Message(self._uuid, port, nickname)
+        self._msg = message.Message(self._uuid, port, nickname, role)
         self._server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._server.bind(('0.0.0.0', port))
         self._server.listen(5)
@@ -64,7 +66,6 @@ class Node(object):
     def lastLocalSnapshot(self):
         return self._lastLocalSnapshot
     
-
     def listen(self):
         while True:
             logging.info('Listening...')
@@ -87,8 +88,7 @@ class Node(object):
             self.handle_message(client, addr, msg)
             client.close()
             return msg
-        except Exception, e:
-            print e
+        except:
             return False
 
     def oneway_message(self, addr, msg):
@@ -109,7 +109,7 @@ class Node(object):
         client_socket.close()
 
     def handle_message(self, socket, addr, msg):
-        node = (msg['uuid'], addr[0], msg['port'], msg['nickname'])
+        node = (msg['uuid'], addr[0], msg['port'], msg['nickname'], msg['role'])
         addr = (addr[0], msg['port'])
         msg_level = msg['level']
         msg_type = msg['type']
@@ -122,7 +122,7 @@ class Node(object):
                 self.oneway_message((n[1], n[2]), self.msg.notifyNewNode(node))
 
             self.nodeList.append(node)
-            logging.info('add node (%d,%s,%d,%s)' % node)
+            logging.info('add node (%d,%s,%d,%s,%s)' % node)
 
         if msg_level in router:
             cls = self.__class__
@@ -136,9 +136,9 @@ class Node(object):
 
     # begin handlers
     def onNotifyNewNode(self, socket, addr, node, msg):
-        node = (msg['node']['uuid'], msg['node']['ip'], msg['node']['port'], msg['node']['nickname'])
+        node = (msg['node']['uuid'], msg['node']['ip'], msg['node']['port'], msg['node']['nickname'], msg['node']['role'])
         self.nodeList.append(node)
-        logging.info('add node (%d,%s,%d,%s)' % node)
+        logging.info('add node (%d,%s,%d,%s,%s)' % node)
 
     def onRequireNodeList(self, socket, addr, node, msg):
         # reply with local node list
@@ -157,10 +157,16 @@ class Node(object):
         # delete node
         self.deleteNode(msg['uuid'])
         socket.send(self.msg.ack())
-        logging.info('deleted node (%d,%s,%d,%s)' % node)
+        logging.info('deleted node (%d,%s,%d,%s,%s)' % node)
 
     def onAck(self, socket, addr, node, msg):
         # do nothing yet
+        pass
+
+    def onCheckAlive(self, socket, addr, node, msg):
+        socket.send(self.msg.alive())
+
+    def onAlive(self, socket, addr, node, msg):
         pass
 
     def onStartTransaction(self, socket, addr, node, msg):
@@ -188,6 +194,7 @@ class Node(object):
         if balance > 0:
             self.user.add_money(balance)
             self.user.show_resources()
+            self.fire_notification()
         logging.info("%s, withdraw %s "%(msg['info'],msg['balance']))
 
 
@@ -232,13 +239,10 @@ class Node(object):
                 self.lastLocalSnapshot.recordMessage(node, msg)
 
     def localState(self):
-        return {
-            'food': self.user.get_food(), 
-            'wood': self.user.get_wood(), 
-            'mineral': self.user.get_mineral(),
-            'leather': self.user.get_leather(),
-            'money': self.user.get_money()
-        }
+        off = self.user.get_user_resource_status()
+        on = self.user.get_trading_center_status()
+        result = {k:{'for trade': on.get(k, (0,0))[0], 'price': on.get(k, (0,0))[1], 'stock': off[k]} for k in off.keys()}
+        return result
 
     # end of handlers
 
@@ -257,6 +261,14 @@ class Node(object):
         logging.info('logged out. bye.')
         return True
 
+    def checkAlive(self):
+        for n in self.nodeList:
+            result = self.send_message((n[1], n[2]), self.msg.checkAlive())
+            if result == False:
+                self.nodeList.remove(n)
+                logging.info('deleted node (%d,%s,%d,%s,%s)' % n)
+        return True
+
     # begin helpers
     def deleteNode(self, uuid):
         for node in self.nodeList:
@@ -272,16 +284,20 @@ class Node(object):
     # end of helpers
 
     def fire_notification(self):
-        NotificationCentre.defaultCentre().fire('resource_change', {'food': self.user.get_food(),
-                                                                    'wood': self.user.get_wood(),
-                                                                    'mineral': self.user.get_mineral(),
-                                                                    'leather': self.user.get_leather(),
-                                                                    'money': self.user.get_money()})
+        NotificationCentre.defaultCentre().fire('resource_change', {
+            'food': self.user.get_food(),
+            'wood': self.user.get_wood(),
+            'mineral': self.user.get_mineral(),
+            'leather': self.user.get_leather(),
+            'money': self.user.get_money()
+        })
 
-        NotificationCentre.defaultCentre().fire('trading_change', {'food': (self.user.trading_center.get_food(), self.user.trading_center.get_food_price()),
-                                                                   'wood': (self.user.trading_center.get_wood(), self.user.trading_center.get_wood_price()),
-                                                                   'mineral': (self.user.trading_center.get_mineral(), self.user.trading_center.get_mineral_price()),
-                                                                   'leather': (self.user.trading_center.get_leather(), self.user.trading_center.get_leather_price())})
+        NotificationCentre.defaultCentre().fire('trading_change', {
+            'food': (self.user.trading_center.get_food(), self.user.trading_center.get_food_price()),
+            'wood': (self.user.trading_center.get_wood(), self.user.trading_center.get_wood_price()),
+            'mineral': (self.user.trading_center.get_mineral(), self.user.trading_center.get_mineral_price()),
+            'leather': (self.user.trading_center.get_leather(), self.user.trading_center.get_leather_price())
+        })
 
 def main(argv):
     node = Node(argv[1], int(argv[2]), argv[3])
