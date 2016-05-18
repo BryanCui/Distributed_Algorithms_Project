@@ -102,6 +102,10 @@ class Message:
         msg.update(self.basic())
         return json.dumps(msg)
 
+    def transactionRunning(self):
+        msg = {'level': 'app', 'type': 'transactionRunning'}
+        msg.update(self.basic())
+        return json.dumps(msg)
 
     def snapshotMarker(self):
         msg = {'level': 'snapshot', 'type': 'marker'}
