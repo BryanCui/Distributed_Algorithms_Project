@@ -11,6 +11,16 @@ class Message:
     def basic(self):
         return {'uuid': self.__uuid, 'port': self.__port, 'nickname': self.__nickname}
 
+    def checkAlive(self):
+        msg = {'level': 'app', 'type': 'checkAlive'}
+        msg.update(self.basic())
+        return json.dumps(msg)
+
+    def alive(self):
+        msg = {'level': 'app', 'type': 'alive'}
+        msg.update(self.basic())
+        return json.dumps(msg)
+
     def notifyNewNode(self, node):
         msg = {'level': 'app', 'type': 'notifyNewNode', 'node': {'uuid': node[0], 'ip': node[1], 'port': node[2], 'nickname': node[3]}}
         msg.update(self.basic())
