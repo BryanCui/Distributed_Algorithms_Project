@@ -21,6 +21,7 @@ router = {
     ('app', 'sellResource'): 'onSellResource',
     ('app', 'finishTransaction'): 'onFinishTransaction',
     ('app', 'confirmFinishTransaction'): 'onConfirmFinishTransaction',
+    ('app', 'doneTransaction'): 'onDoneTransaction',
     ('app', 'showTradingCenter'): 'onShowTradingCenter',
     ('app', 'returnTradingCenter'): 'onReturnTradingCenter',
     ('snapshot', ''): ''
@@ -38,7 +39,7 @@ class Node(object):
         self._server.bind(('0.0.0.0', port))
         self._server.listen(5)
         self._user = User()
-        self._transaction = Transactions('', self._msg, self,self._user)
+        self._transaction = Transactions('', self._msg, self, self._user)
         print self._user.show_resources()
         thread.start_new_thread(self.listen, ())
 
@@ -152,6 +153,9 @@ class Node(object):
         #socket.send(self.msg.confirmFinishTransaction())
 
     def onConfirmFinishTransaction(self, socket, addr, node, msg):
+        self._transaction.done_transaction(addr)
+
+    def onDoneTransaction(self, socket, addr, node, msg):
         return
 
     def onShowTradingCenter(self, socket, addr, node, msg):
