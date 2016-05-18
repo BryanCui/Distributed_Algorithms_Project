@@ -126,7 +126,7 @@ def main(argv):
         elif ws[0] == 'show':
             result = command.execute('localResource')
         elif ws[0] == 'buy':
-            result = command.execute('buy', (ws[1], int(ws[2]), ws[3], int(ws[4])))
+            result = command.execute('buy', (ws[1], int(ws[2])), ws[3], int(ws[4]))
         elif ws[0] == 'stock':
             result = command.execute('toStock', ws[1], int(ws[2]))
         elif ws[0] == 'trade':
