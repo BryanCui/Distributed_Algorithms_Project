@@ -61,6 +61,11 @@ class Message:
         msg.update(self.basic())
         return json.dumps(msg)
 
+    def doneTransaction(self):
+        msg = {'level': 'app', 'type': 'doneTransaction'}
+        msg.update(self.basic())
+        return json.dumps(msg)
+
     def buyResource(self, resource, quantity):
         msg = {'level': 'app', 'type': 'buyResource', 'resource':resource, 'quantity': quantity}
         msg.update(self.basic())

@@ -21,6 +21,7 @@ router = {
     ('app', 'sellResource'): 'onSellResource',
     ('app', 'finishTransaction'): 'onFinishTransaction',
     ('app', 'confirmFinishTransaction'): 'onConfirmFinishTransaction',
+    ('app', 'doneTransaction'): 'onDoneTransaction',
     ('app', 'showTradingCenter'): 'onShowTradingCenter',
     ('app', 'returnTradingCenter'): 'onReturnTradingCenter',
     ('snapshot', 'marker'): 'onMarker',
@@ -39,7 +40,7 @@ class Node(object):
         self._server.bind(('0.0.0.0', port))
         self._server.listen(5)
         self._user = User()
-        self._transaction = Transactions('', self._msg, self,self._user)
+        self._transaction = Transactions('', self._msg, self, self._user)
         self._lastLocalSnapshot = None
         print self._user.show_resources()
         thread.start_new_thread(self.listen, ())
@@ -151,18 +152,16 @@ class Node(object):
         resource = msg['resource']
         quantity = int(msg['quantity'])
         self._transaction.confirm_start_transaction(socket, resource, quantity)
-        #socket.send(self.msg.confirmStartTransaction(msg['resource'], int(msg['quantity'])))
 
     def onConfirmStartTransaction(self, socket, addr, node, msg):
         resource = msg['resource']
         quantity = int(msg['quantity'])
         self._transaction.buy_resource(addr, resource, quantity)
-        #self.send_message(addr, self.msg.buyResource(resource, quantity))
 
     def onBuyResource(self, socket, addr, node, msg):
         resource = msg['resource']
         quantity = int(msg['quantity'])
-        price = self.user.get_trading_center().get_resources_price(resource)
+        price = self.user.trading_center.get_resources_price(resource)
         self._transaction.sell_resource(socket, resource, quantity, price)
 
     def onSellResource(self, socket, addr, node, msg):
@@ -170,13 +169,16 @@ class Node(object):
 
     def onFinishTransaction(self, socket, addr, node, msg):
         self._transaction.confirm_finish_transaction(socket)
-        #socket.send(self.msg.confirmFinishTransaction())
 
     def onConfirmFinishTransaction(self, socket, addr, node, msg):
-        return
+        self._transaction.done_transaction(addr)
+        self._transaction.set_finished(True)
+
+    def onDoneTransaction(self, socket, addr, node, msg):
+        self._transaction.set_finished(True)
 
     def onShowTradingCenter(self, socket, addr, node, msg):
-        socket.send(self.msg.returnTradingCenter(self.user.get_trading_center().get_trading_list()))
+        socket.send(self.msg.returnTradingCenter(self.user.trading_center.get_trading_list()))
 
     def onReturnTradingCenter(self, socket, addr, node, msg):
         for (item, value) in msg['tradingList'].items():
@@ -262,7 +264,7 @@ def main(argv):
         elif ws[0] == 'resource':
             logging.info(node.user.show_resources())
         elif ws[0] == 'trading_center':
-            logging.info(node.user.get_trading_center().show_trading_center())
+            logging.info(node.user.trading_center.show_trading_center())
         elif ws[0] == 'sell':
             node.user.put_resource_into_trading_center(ws[1], int(ws[2]), int(ws[3]))
         elif ws[0] == 'get_resource_back_from_trading_center':

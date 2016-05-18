@@ -1,11 +1,8 @@
 #coding=UTF-8
 
-import sys, socket, thread, time, logging
-import pprint
+import sys, thread, time, logging
 import threading
-import message
 from bank import Bank
-import types
 import node
 
 router = node.router
@@ -16,17 +13,20 @@ logging.getLogger().setLevel(logging.INFO)
 class BankNode(node.Node):
     def __init__(self, nickname, port):
         # over
-        super(BankNode, self).__init__(nickname, port)
+        super(BankNode, self).__init__(nickname,'' ,port)
         thread.start_new_thread(self.node_main, ())
         self.bank = Bank()
         self.cl_list = []
         self.addr_list = []
         self.mylock = threading.RLock()
 
+    # method to activate the cdKey as the node requests
     def onActivate(self, socket, addr, node, msg):
         # activate the cdkey
         self.mylock.acquire()
         result = self.bank.activate_cdkey(msg['cdkey'])
+        # sleep for concurrent test
+        # time.sleep(5)
         # if it is num
         if not self.is_num(result):
             socket.send(self.msg.answerActivate(balance=result))
@@ -36,6 +36,7 @@ class BankNode(node.Node):
         logging.info('%s'%result)
         self.mylock.release()
 
+    # re-write the listen method maintaining queue for waiting
     def listen(self):
         while True:
             logging.info('Listening...')
@@ -48,6 +49,7 @@ class BankNode(node.Node):
             except KeyboardInterrupt:
                 break
 
+    # new method to handle the listener in queue by order
     def node_main(self):
         while True:
             if self.cl_list and self.addr_list:
