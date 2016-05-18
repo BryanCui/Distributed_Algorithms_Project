@@ -14,6 +14,9 @@ route = {
     'remoteNodeResource': 'remoteNodeResource',
     'startSnapshot': 'startSnapshot',
     'checkAlive': 'checkAlive',
+    'toTrade': 'toTrade',
+    'toStock': 'toStock',
+    'buy': 'buy',
     'logout': 'logout'
 }
 
@@ -76,14 +79,18 @@ class Command(object):
         return self.node.checkAlive()
 
     def logout(self):
-        return self.node.logout()
+        result = self.node.logout()
+        sys.exit(0)
+        return result
 
-    def test(self, info):
-        logging.info('finished!!!!!!!!')
-        logging.info(info['snapshot'].localState)
-        logging.info(info['snapshot'].channelStates)
+    def toTrade(self, resource, num, price):
+        return self.node.user.put_resource_into_trading_center(resource, int(num), int(price))
 
+    def toStock(self, resource, num):
+        return self.node.user.get_resource_from_trading_center_back(resource, int(num))
 
+    def buy(self, addr, resource, num):
+        return self.node.start_transaction(addr, resource, int(num))
 
     # login nickname role address(ip:port)
     # 
@@ -92,7 +99,6 @@ class Command(object):
 
 def main(argv):
     command = Command()
-    NotificationCentre.defaultCentre().addObserver('SnapshotDidFinish', command, 'test')
     if len(argv) == 4:
         command.execute('createGame', argv[1], argv[2], int(argv[3]))
     elif len(argv) == 6:

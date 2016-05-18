@@ -7,11 +7,13 @@ import logging
 class TradingCenter(Singleton):
 
     def __init__(self):
+        # [quantity, price, resource_name]
         self.__food = [0, 0, 'food']
         self.__wood = [0, 0, 'wood']
         self.__mineral = [0, 0, 'mineral']
         self.__leather = [0, 0, 'leather']
 
+    # set the resources to sell
     def set_resource_to_sell(self, resource, quantity, price):
         if resource == 'food':
             self.__food = [self.__food[0]+quantity, price, 'food']
@@ -46,6 +48,7 @@ class TradingCenter(Singleton):
     def get_leather(self):
         return self.__leather[0]
 
+    # get the resource price according to the resource name
     def get_resources_price(self, resource):
         if resource == 'food':
             return self.__food[1]
@@ -56,6 +59,7 @@ class TradingCenter(Singleton):
         elif resource == 'leather':
             return self.__leather[1]
 
+    # get the resource quantity according to the resource name
     def get_resources(self, resource):
         if resource == 'food':
             return self.__food[0]
@@ -75,12 +79,14 @@ class TradingCenter(Singleton):
         self.__mineral[0] = mineral
         self.__leather[0] = leather
 
+    # show the trading center status
     def show_trading_center(self):
         logging.info("Food: %d  Price: %d" % (self.__food[0], self.__food[1]))
         logging.info("Wood: %d  Price: %d" % (self.__wood[0], self.__wood[1]))
         logging.info("Mineral: %d  Price: %d" % (self.__mineral[0], self.__mineral[1]))
         logging.info("Leather: %d  Price: %d" % (self.__leather[0], self.__leather[1]))
 
+    # consume the resources from trading center
     def consume_resources(self, resource, quantity):
         if resource == 'food':
             self.__food[0] -= quantity
@@ -102,6 +108,7 @@ class TradingCenter(Singleton):
     #         money = quantity * self.get_leather_price()
     #     return money
 
+    # get the trading center resources and price
     def get_trading_list(self):
         return {'food':(self.__food[0], self.__food[1]),
                 'wood':(self.__wood[0], self.__wood[1]),
