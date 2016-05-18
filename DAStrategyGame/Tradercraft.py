@@ -21,6 +21,7 @@ class ActionControllerCmd(npyscreen.ActionControllerSimple):
         if commands[0] == "q":
             sys.exit() 
 
+        result = ""
         if commands[0] != "r":
             if len(commands) >= 2: 
                 result = App.command.execute(commands[0], *commands[1:])
