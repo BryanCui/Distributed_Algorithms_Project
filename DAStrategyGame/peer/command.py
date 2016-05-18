@@ -143,19 +143,6 @@ def main(argv):
             result = command.execute('activate', ws[1], int(ws[2]), ws[3])
         elif ws[0] == 'tradingCenter':
             result = command.execute('tradingCenter')
-        # elif ws[0] == 'resource':
-        #     logging.info(node.user.show_resources())
-        # elif ws[0] == 'trading_center':
-        #     logging.info(node.user.get_trading_center().show_trading_center())
-        # elif ws[0] == 'sell':
-        #     node.user.put_resource_into_trading_center(ws[1], int(ws[2]), int(ws[3]))
-        # elif ws[0] == 'get_resource_back_from_trading_center':
-        #     node.user.get_resource_from_trading_center_back(ws[1], int(ws[2]))
-        # elif ws[0] == 'get_trading_list':
-        #     node.send_message((ws[1], int(ws[2])), node.msg.showTradingCenter())
-        # elif ws[0] == 'buy':
-        #     node._transaction = Transactions((ws[1], int(ws[2])), node._msg, node, node.user)
-        #     node._transaction.start_transaction(ws[3], ws[4])
         elif ws[0] == 'snapshot':
             result = command.execute('snapshot')
         elif ws[0] == 'checkAlive':
