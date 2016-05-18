@@ -13,7 +13,7 @@ logging.getLogger().setLevel(logging.INFO)
 class BankNode(node.Node):
     def __init__(self, nickname, port):
         # over
-        super(BankNode, self).__init__(nickname,'' ,port)
+        super(BankNode, self).__init__(nickname,port,'bank')
         thread.start_new_thread(self.node_main, ())
         self.bank = Bank()
         self.cl_list = []
